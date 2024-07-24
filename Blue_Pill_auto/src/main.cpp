@@ -18,7 +18,7 @@ void setup() {
     setupPWM();
     updateMotorSpeed();
 
-    Serial2.begin(9600);
+    Serial2.begin(9600); // begin communication with ESP32
 
     for (int i = 0; i < 5; i++) {
         pinMode(sensor_pins_left[i], INPUT_ANALOG);
@@ -35,7 +35,7 @@ void loop() {
     }
     if (run) {
         if (!(current->equals(goal)) && (to_execute->done || to_execute==nullptr)) {
-            delete to_execute;
+            delete to_execute; // fine to delete potential nullptr
             to_execute = current->calculate_path(goal);
         } else if (!to_execute->done) {
             to_execute->execute();

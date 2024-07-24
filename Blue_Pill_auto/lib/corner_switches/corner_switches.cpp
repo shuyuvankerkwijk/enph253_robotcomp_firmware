@@ -17,10 +17,10 @@ void setup_switch_interrupts(){ // Corrected function name
 }
 
 void handle_switch_F_R_Rising(){
-    switch_states[0] = true;
+    switch_states[0] = false;
 }
 void handle_switch_F_R_Falling(){
-    switch_states[0] = false;
+    switch_states[0] = true;
 }
 
 void handle_switch_F_L_Rising(){

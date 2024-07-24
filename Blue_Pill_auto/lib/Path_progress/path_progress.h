@@ -6,10 +6,10 @@ public:
     Left_to_right();
     bool done;
 
-    int std_motor_speeds[4];
+    // int std_motor_speeds[4];
 
     int right_sensors_crossed[5]; // 0 is before, 1 is on, and 2 is crossed
-    bool right_corssed;
+    bool right_crossed;
     int left_sensors_crossed[5];
     bool left_crossed;
 
@@ -24,10 +24,10 @@ public:
     Right_to_left();
     bool done;
 
-    int std_motor_speeds[4];
+    // int std_motor_speeds[4];
 
     int right_sensors_crossed[5]; // 0 is before, 1 is on, and 2 is crossed
-    bool right_corssed;
+    bool right_crossed;
     int left_sensors_crossed[5];
     bool left_crossed;
 
@@ -43,15 +43,21 @@ public:
 
     bool done;
 
-    int std_motor_speeds[4];
+    // int std_motor_speeds[4];
 
     bool forward;
     bool backward;
     int inches;
     int tape_markings;
 
-    int right_sensors_crossed[5]; // 0 is before, 1 is on, and 2 is crossed
-    int left_sensors_crossed[5];
+    bool ac_left; // needed? -- shuyu addition
+    bool ac_right;
+
+    int right_sensors_on[5]; // 0 is off tape, 1 is on tape
+    int left_sensors_on[5];
+
+    int right_sensors_num_crossed[5]; // The number of tape markings crossed by the sensor
+    int left_sensors_num_crossed[5]; 
 
     void run_cycle();
     void check_right_sensors();

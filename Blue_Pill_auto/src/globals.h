@@ -23,6 +23,13 @@ extern Position Plates;
 extern Position Lettuce;
 
 extern int motorSpeeds[4];
+extern int stdMotorSpeedsRTL[4];
+extern int stdMotorSpeedsLTR[4];
+extern int stdMotorSpeedsAC[4];
+extern int slowMotorSpeedsRTL[4];
+extern int slowMotorSpeedsLTR[4];
+extern int slowMotorSpeedsAC[4];
+
 
 extern PinName sensor_pins_left[5];
 extern PinName sensor_pins_right[5];

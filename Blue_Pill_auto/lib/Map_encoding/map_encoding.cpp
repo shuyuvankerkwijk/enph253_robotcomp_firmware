@@ -12,14 +12,15 @@ Path::Path(bool left_to_right, bool right_to_left, bool find_beacon, int tape_co
     // Initialization code if needed
 }
 
+// Equals method for Position class
 bool Position::equals(Position* goal) const {
     return this->name.equals(goal->name);
 }
 
 // Calculate path method for Position class
 Path* Position::calculate_path(Position* end) const {
-    bool left_to_right = (this->side == left && end->side == right);
-    bool right_to_left = (this->side == right && end->side == left);
+    bool left_to_right = (this->side == left && end->side == right); // need to cross to right counter?
+    bool right_to_left = (this->side == right && end->side == left); // need to cross to left counter?
     bool find_beacon = (end->mark == IR_beacon);
     int inches_to_travel = end->y_position - this->y_position;
 
