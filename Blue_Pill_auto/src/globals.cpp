@@ -3,6 +3,12 @@
 
 int Reflectance_threshold = 450;
 bool switch_states[4] = {false, false, false, false}; // is switch pressed or not -- switch is high when unpressed, low when pressed
+/**
+ * switch_states[0] = front right switch
+ * switch_states[1] = front left switch
+ * switch_states[2] = back right switch
+ * switch_states[3] = back left switch
+ */
 
 // Front house robot positions
 Position Start(String("Start"), right, 1, 6, tape); //TODO: should start on left (to grab plates)
@@ -15,6 +21,18 @@ Position Plates(String("Plates"), left, 3, 90, tape);
 Position Lettuce(String("Lettuce"), right, 3, 90, tape);
 
 int motorSpeeds[4] = {0, 0, 0, 0};
+
+/**
+ * Motor PWM duty cycles for 200 RPM at 16V & 100Hz
+ * 
+ * Front motor by Kamyar calibration:
+ * 
+ * M    F       R
+ * 0    200     195
+ * 1    193     187
+ * 2    148     143
+ * 3    180     177
+ */
 
 int stdMotorSpeedsRTL[4] = {100, 100, 100, 100}; // TODO: change to correct values
 int stdMotorSpeedsLTR[4] = {100, 100, 100, 100}; // TODO: change to correct values

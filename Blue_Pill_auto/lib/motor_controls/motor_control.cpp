@@ -54,7 +54,7 @@ void setupPWM() {
 
 void updateMotorSpeed() {
     for (int i = 0; i < 4; i++) {
-        uint32_t speed = (motorSpeeds[i] > 0) ? (uint32_t)(motorSpeeds[i] * 10) : (uint32_t)(-motorSpeeds[i] * 10);
+        uint32_t speed = (motorSpeeds[i] > 0) ? (uint32_t)(motorSpeeds[i]) : (uint32_t)(-motorSpeeds[i]);
 
         switch(i) {
             case 0:  // Motor 0

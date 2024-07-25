@@ -9,7 +9,16 @@ Position::Position(String name, Counter side, int tape_count, int y_position, Ma
 // Path constructor
 Path::Path(bool left_to_right, bool right_to_left, bool find_beacon, int tape_count, bool done)
     : left_to_right(left_to_right), right_to_left(right_to_left), find_beacon(find_beacon), done(done) {
-    // Initialization code if needed
+    
+    if (left_to_right) {
+        ltr_obj = Left_to_right();
+    } else if (right_to_left) {
+        rtl_obj = Right_to_left();
+    } else if (find_beacon) {
+        // Handle IR beacon finding logic
+    }
+        ac_obj = Along_counter();
+    
 }
 
 // Equals method for Position class
@@ -36,6 +45,7 @@ void Path::execute() {
         // Handle IR beacon finding logic
     } else if (!ac_obj.done) {
         ac_obj.run_cycle();
+    }else{
+        done = true;
     }
-    done = true;
 }
