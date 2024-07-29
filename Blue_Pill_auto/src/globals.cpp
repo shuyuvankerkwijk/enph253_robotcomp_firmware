@@ -4,10 +4,12 @@
 int Reflectance_threshold = 450;
 bool switch_states[4] = {false, false, false, false}; // is switch pressed or not -- switch is high when unpressed, low when pressed
 /**
- * switch_states[0] = front right switch
- * switch_states[1] = front left switch
- * switch_states[2] = back right switch
- * switch_states[3] = back left switch
+ * switch_states[0] = front left switch
+ * switch_states[1] = front right switch
+ * switch_states[2] = back left switch
+ * switch_states[3] = back right switch
+ * 
+ * same for motors
  */
 
 // Front house robot positions
@@ -34,13 +36,15 @@ int motorSpeeds[4] = {0, 0, 0, 0};
  * 3    180     177
  */
 
-int stdMotorSpeedsRTL[4] = {100, 100, 100, 100}; // TODO: change to correct values
-int stdMotorSpeedsLTR[4] = {100, 100, 100, 100}; // TODO: change to correct values
-int stdMotorSpeedsAC[4] = {100, 100, 100, 100}; // TODO: change to correct values
+int stdMotorSpeedsRTL[4] = {-195, 187, 143, -177}; // TODO: change to correct values
+int stdMotorSpeedsLTR[4] = {200, -187, -143, 180}; // TODO: change to correct values
+int stdMotorSpeedsForward[4] = {200, 193, 148, 180}; // TODO: change to correct values
+int stdMotorSpeedsBackward[4] = {-195, -187, -143, -177}; // TODO: change to correct values
 
-int slowMotorSpeedsRTL[4] = {25, 25, 25, 25}; // TODO: change to correct values
-int slowMotorSpeedsLTR[4] = {25, 25, 25, 25}; // TODO: change to correct values
-int slowMotorSpeedsAC[4] = {25, 25, 25, 25}; // TODO: change to correct values
+int slowMotorSpeedsRTL[4] = {-50, 50, 50, -50}; // TODO: change to correct values
+int slowMotorSpeedsLTR[4] = {50, -50, -50, 50}; // TODO: change to correct values
+int slowMotorSpeedsForward[4] = {50, 50, 50, 50}; // TODO: change to correct values
+int slowMotorSpeedsBackward[4] = {-50, -50, -50, -50}; // TODO: change to correct values
 
 
 // PinName motor_pwm_pins[4] = {PB_8, PB_9, PB_6, PB_7}; // Not used anywhere, just for reference

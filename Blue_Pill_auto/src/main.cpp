@@ -35,10 +35,16 @@ void loop() {
     }
     if (run) {
         if (!(current->equals(goal)) && (to_execute->done || to_execute==nullptr)) {
-            delete to_execute; // fine to delete potential nullptr
+            delete to_execute;
             to_execute = current->calculate_path(goal);
         } else if (!to_execute->done) {
             to_execute->execute();
         }
+    }else{
+        for(int i=0;i<4;i++){
+            motorSpeeds[i]=0;
+        }
+        
     }
+    updateMotorSpeed();
 }

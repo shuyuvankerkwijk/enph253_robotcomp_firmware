@@ -1,12 +1,11 @@
 #include "stm32f1xx.h"
 #include "stm32f1xx_hal.h"
 #include "motor_control.h"
-#include "globals.h"
 
 /**
  *    PWM   D-Select    
- * M0 B8    B15
- * M1 B9    B14
+ * M0 B8    B14
+ * M1 B9    B15
  * M2 B6    B12
  * M3 B7    B13
  */
@@ -52,7 +51,7 @@ void setupPWM() {
     TIM4->CR1 |= TIM_CR1_CEN;  // Enable TIM4
 }
 
-void updateMotorSpeed() {
+void updateMotorSpeed(int motorSpeeds[]) {
     for (int i = 0; i < 4; i++) {
         uint32_t speed = (motorSpeeds[i] > 0) ? (uint32_t)(motorSpeeds[i]) : (uint32_t)(-motorSpeeds[i]);
 
@@ -60,33 +59,33 @@ void updateMotorSpeed() {
             case 0:  // Motor 0
                 TIM4->CCR3 = speed;
                 if (motorSpeeds[i] > 0) {
-                    GPIOB->BSRR = GPIO_BSRR_BS15;  // Set PB15 high
+                    GPIOB->BSRR = GPIO_BSRR_BR14;  // Set PB14 low
                 } else {
-                    GPIOB->BSRR = GPIO_BSRR_BR15;  // Set PB15 low
+                    GPIOB->BSRR = GPIO_BSRR_BS14;  // Set PB14 high
                 }
                 break;
             case 1:  // Motor 1
                 TIM4->CCR4 = speed;
                 if (motorSpeeds[i] > 0) {
-                    GPIOB->BSRR = GPIO_BSRR_BS14;  // Set PB14 high
+                    GPIOB->BSRR = GPIO_BSRR_BR15;  // Set PB15 low
                 } else {
-                    GPIOB->BSRR = GPIO_BSRR_BR14;  // Set PB14 low
+                    GPIOB->BSRR = GPIO_BSRR_BS15;  // Set PB15 high
                 }
                 break;
             case 2:  // Motor 2
+                TIM4->CCR2 = speed;
+                if (motorSpeeds[i] > 0) {
+                    GPIOB->BSRR = GPIO_BSRR_BR13;  // Set PB13 low
+                } else {
+                    GPIOB->BSRR = GPIO_BSRR_BS13;  // Set PB13 high
+                }
+                break;
+            case 3:  // Motor 3
                 TIM4->CCR1 = speed;
                 if (motorSpeeds[i] > 0) {
                     GPIOB->BSRR = GPIO_BSRR_BS12;  // Set PB12 high
                 } else {
                     GPIOB->BSRR = GPIO_BSRR_BR12;  // Set PB12 low
-                }
-                break;
-            case 3:  // Motor 3
-                TIM4->CCR2 = speed;
-                if (motorSpeeds[i] > 0) {
-                    GPIOB->BSRR = GPIO_BSRR_BS13;  // Set PB13 high
-                } else {
-                    GPIOB->BSRR = GPIO_BSRR_BR13;  // Set PB13 low
                 }
                 break;
         }

@@ -7,7 +7,7 @@ Position::Position(String name, Counter side, int tape_count, int y_position, Ma
 }
 
 // Path constructor
-Path::Path(bool left_to_right, bool right_to_left, bool find_beacon, int tape_count, bool done)
+Path::Path(bool left_to_right, bool right_to_left, bool find_beacon, int tape_count, int inches_to_travel)
     : left_to_right(left_to_right), right_to_left(right_to_left), find_beacon(find_beacon), done(done) {
     
     if (left_to_right) {
@@ -17,7 +17,7 @@ Path::Path(bool left_to_right, bool right_to_left, bool find_beacon, int tape_co
     } else if (find_beacon) {
         // Handle IR beacon finding logic
     }
-        ac_obj = Along_counter();
+    ac_obj = Along_counter();
     
 }
 
@@ -33,7 +33,39 @@ Path* Position::calculate_path(Position* end) const {
     bool find_beacon = (end->mark == IR_beacon);
     int inches_to_travel = end->y_position - this->y_position;
 
-    return new Path(left_to_right, right_to_left, find_beacon, tape_count, false);
+
+    Path* result = new Path(left_to_right, right_to_left, find_beacon, tape_count, inches_to_travel);
+
+    //define the counter side we are going on
+    if(end->side == right){
+        result->ac_obj.ac_right=true;
+        result->ac_obj.ac_right=false;
+    }else if(end->side == left){
+        result->ac_obj.ac_right=false;
+        result->ac_obj.ac_right=true;
+    }
+
+    //define if we are going forward or backwards
+    if(inches_to_travel>0){
+        result->ac_obj.forward=true;
+        result->ac_obj.backward=false;
+    }else if(inches_to_travel<=0){
+        result->ac_obj.forward=false;
+        result->ac_obj.backward=true;
+    }
+
+    //going to a side from the middle start position.
+    if(this->name.equals("start")){
+        if(result->left_to_right == true){
+            result->ltr_obj.right_crossed=true;
+        }else if(result->right_to_left==true){
+            result->rtl_obj.left_crossed = true;
+        }
+
+        result->ac_obj.tape_markings = tape_count;
+    }
+
+    return result;
 }
 
 void Path::execute() {

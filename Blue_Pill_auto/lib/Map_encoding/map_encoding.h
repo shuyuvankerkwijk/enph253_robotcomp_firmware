@@ -26,7 +26,7 @@ public:
 
 class Path {
 public:
-    Path(bool left_to_right, bool right_to_left, bool find_beacon, int tape_count, bool done);
+    Path(bool left_to_right, bool right_to_left, bool find_beacon, int tape_count, int inches_to_travel);
     void execute();
     bool done;
     bool left_to_right;

@@ -6,8 +6,6 @@ public:
     Left_to_right();
     bool done;
 
-    // int std_motor_speeds[4];
-
     int right_sensors_crossed[3]; // 0 is before, 1 is on, and 2 is crossed
     bool right_crossed;
     int left_sensors_crossed[3];
@@ -23,8 +21,6 @@ class Right_to_left {
 public:
     Right_to_left();
     bool done;
-
-    // int std_motor_speeds[4];
 
     int right_sensors_crossed[3]; // 0 is before, 1 is on, and 2 is crossed
     bool right_crossed;
@@ -43,8 +39,6 @@ public:
 
     bool done;
 
-    // int std_motor_speeds[4];
-
     bool forward;
     bool backward;
     int inches;
@@ -62,7 +56,8 @@ public:
     void run_cycle();
     void check_right_sensors();
     void check_left_sensors();
-    void correct_motor_speeds();
+    void ac_left_correct_motor_speeds();
+    void ac_right_correct_motor_speeds();
 };
 
 #endif // PATH_PROGRESS_H

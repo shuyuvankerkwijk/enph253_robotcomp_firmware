@@ -25,10 +25,12 @@ extern Position Lettuce;
 extern int motorSpeeds[4];
 extern int stdMotorSpeedsRTL[4];
 extern int stdMotorSpeedsLTR[4];
-extern int stdMotorSpeedsAC[4];
+extern int stdMotorSpeedsForward[4];
+extern int stdMotorSpeedsBackward[4];
 extern int slowMotorSpeedsRTL[4];
 extern int slowMotorSpeedsLTR[4];
-extern int slowMotorSpeedsAC[4];
+extern int slowMotorSpeedsForward[4];
+extern int slowMotorSpeedsBackward[4];
 
 
 extern PinName sensor_pins_left[5];
