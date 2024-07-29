@@ -26,7 +26,7 @@ int motorSpeeds[4] = {0, 0, 0, 0};
 
 /**
  * Motor PWM duty cycles for 200 RPM at 16V & 100Hz
- * 
+ * ß
  * Front motor by Kamyar calibration:
  * 
  * M    F       R
@@ -36,10 +36,10 @@ int motorSpeeds[4] = {0, 0, 0, 0};
  * 3    180     177
  */
 
-int stdMotorSpeedsRTL[4] = {-195, 187, 143, -177}; // TODO: change to correct values
-int stdMotorSpeedsLTR[4] = {200, -187, -143, 180}; // TODO: change to correct values
-int stdMotorSpeedsForward[4] = {200, 193, 148, 180}; // TODO: change to correct values
-int stdMotorSpeedsBackward[4] = {-195, -187, -143, -177}; // TODO: change to correct values
+int stdMotorSpeedsRTL[4] = {-195, 187, 143, -177}; 
+int stdMotorSpeedsLTR[4] = {200, -187, -143, 180}; 
+int stdMotorSpeedsForward[4] = {200, 193, 148, 180};
+int stdMotorSpeedsBackward[4] = {-195, -187, -143, -177};
 
 int slowMotorSpeedsRTL[4] = {-50, 50, 50, -50}; // TODO: change to correct values
 int slowMotorSpeedsLTR[4] = {50, -50, -50, 50}; // TODO: change to correct values

@@ -9,9 +9,8 @@ void Left_to_right::run_cycle() {
     } else if (right_crossed) {
         check_left_sensors();
         correct_motor_speeds();
-        // Additional logic for when the right side is crossed
     }
-    if(left_crossed && switch_states[0]&&switch_states[2]){
+    if(left_crossed && right_crossed && switch_states[0] && switch_states[2]){ // if both sides crossed and the two switches on the right side clicked, succesfully crossed
         done = true;
     }
 }
@@ -60,7 +59,6 @@ void Left_to_right::correct_motor_speeds() {
     //     for (int i = 0; i < 3; i++) {
     //         motorSpeeds[i] = stdMotorSpeedsLTR[i];
     //     }
-        
 
     // // 3. If all right side sensors have crossed, but not left side sensors, ??
     // }
@@ -69,6 +67,7 @@ void Left_to_right::correct_motor_speeds() {
     //     for (int i = 0; i < 3; i++) {
     //         motorSpeeds[i] = stdMotorSpeedsLTR[i];
     //     }
+
     // // 4. If all right side sensors have crossed and left side sensors have crossed, slow motors down
     // } 
     else if(right_crossed && left_crossed) {
@@ -86,7 +85,6 @@ void Right_to_left::run_cycle() {
     } else if (left_crossed) {
         check_left_sensors();
         correct_motor_speeds();
-        // Additional logic for when the right side is crossed
     }
     if(right_crossed && switch_states[1]&&switch_states[3]){
         done = true;
@@ -137,7 +135,6 @@ void Right_to_left::correct_motor_speeds() {
     //         motorSpeeds[i] = stdMotorSpeedsLTR[i];
     //     }
         
-
     // // 3. If all right side sensors have crossed, but not left side sensors, ??
     // }
     // else if (right_crossed && !left_crossed) {
@@ -145,6 +142,7 @@ void Right_to_left::correct_motor_speeds() {
     //     for (int i = 0; i < 3; i++) {
     //         motorSpeeds[i] = stdMotorSpeedsLTR[i];
     //     }
+
     // // 4. If all right side sensors have crossed and left side sensors have crossed, slow motors down
     // } 
     else if(right_crossed && left_crossed) {
@@ -153,9 +151,6 @@ void Right_to_left::correct_motor_speeds() {
         }
     }
 }
-
-
-
 
 void Along_counter::run_cycle() {
 
@@ -201,7 +196,11 @@ void Along_counter::ac_left_correct_motor_speeds() {
     
         // 1. If no sensors on tape or have crossed, set motor speeds to standard AC speeds
         if (!(left_sensors_on[0] || left_sensors_on[1] || left_sensors_on[2])
-            && (left_sensors_num_crossed[0] == 0 && left_sensors_num_crossed[1] == 0 && left_sensors_num_crossed[2] == 0 && left_sensors_num_crossed[3] == 0 && left_sensors_num_crossed[4] == 0)) {
+            && (left_sensors_num_crossed[0] == 0 && 
+            left_sensors_num_crossed[1] == 0 && 
+            left_sensors_num_crossed[2] == 0 && 
+            left_sensors_num_crossed[3] == 0 && 
+            left_sensors_num_crossed[4] == 0)) {
             for (int i = 0; i < 4; i++) {
                 motorSpeeds[i] = stdMotorSpeedsForward[i];
             }
