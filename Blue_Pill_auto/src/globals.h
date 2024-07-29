@@ -27,11 +27,21 @@ extern int stdMotorSpeedsRTL[4];
 extern int stdMotorSpeedsLTR[4];
 extern int stdMotorSpeedsForward[4];
 extern int stdMotorSpeedsBackward[4];
+
+extern int stdMotorSpeedsForwardLeftAC[4];
+extern int stdMotorSpeedsForwardRightAC[4];
+extern int stdMotorSpeedsBackwardLeftAC[4];
+extern int stdMotorSpeedsBackwardRightAC[4];
+
 extern int slowMotorSpeedsRTL[4];
 extern int slowMotorSpeedsLTR[4];
 extern int slowMotorSpeedsForward[4];
 extern int slowMotorSpeedsBackward[4];
 
+extern int slowMotorSpeedsForwardLeftAC[4];
+extern int slowMotorSpeedsForwardRightAC[4];
+extern int slowMotorSpeedsBackwardLeftAC[4];
+extern int slowMotorSpeedBackwardRightAC[4];
 
 extern PinName sensor_pins_left[5];
 extern PinName sensor_pins_right[5];

@@ -33,7 +33,7 @@ int motorSpeeds[4] = {0, 0, 0, 0};
  * 0    200     195
  * 1    193     187
  * 2    148     143
- * 3    180     177
+ * 3    s     177
  */
 
 int stdMotorSpeedsRTL[4] = {-195, 187, 143, -177}; 
@@ -41,11 +41,20 @@ int stdMotorSpeedsLTR[4] = {200, -187, -143, 180};
 int stdMotorSpeedsForward[4] = {200, 193, 148, 180};
 int stdMotorSpeedsBackward[4] = {-195, -187, -143, -177};
 
+int stdMotorSpeedsForwardLeftAC[4] = {200, 193+20, 148, 180+20}; // set right wheels at 2% faster
+int stdMotorSpeedsForwardRightAC[4] = {200+20, 193, 148+20, 180}; // set left wheels at 2% faster
+int stdMotorSpeedsBackwardLeftAC[4] = {-195, -187-20, -143, -177-20}; // set right wheels at 2% faster
+int stdMotorSpeedsBackwardRightAC[4] = {-195-20, -187, -143-20, -177}; // set left wheels at 2% faster
+
 int slowMotorSpeedsRTL[4] = {-50, 50, 50, -50}; // TODO: change to correct values
 int slowMotorSpeedsLTR[4] = {50, -50, -50, 50}; // TODO: change to correct values
 int slowMotorSpeedsForward[4] = {50, 50, 50, 50}; // TODO: change to correct values
 int slowMotorSpeedsBackward[4] = {-50, -50, -50, -50}; // TODO: change to correct values
 
+int slowMotorSpeedsForwardLeftAC[4] = {50, 50+10, 50, 50+10}; // set right wheels at 1% faster
+int slowMotorSpeedsForwardRightAC[4] = {50+10, 50, 50+10, 50}; // set left wheels at 1% faster
+int slowMotorSpeedsBackwardLeftAC[4] = {-50, -50-10, -50, -50-10}; // set right wheels at 1% faster
+int slowMotorSpeedBackwardRightAC[4] = {-50-10, -50, -50-10, -50}; // set left wheels at 1% faster
 
 // PinName motor_pwm_pins[4] = {PB_8, PB_9, PB_6, PB_7}; // Not used anywhere, just for reference
 // PinName motor_d_select_pins[4] = {PB_15, PB_14, PB_12, PB_13}; // Not used anywhere, just for reference
