@@ -1,7 +1,7 @@
 #include "globals.h"
 #include "map_encoding.h"
 
-int Reflectance_threshold = 450;
+int Reflectance_threshold = 500;
 bool switch_states[4] = {false, false, false, false}; // is switch pressed or not -- switch is high when unpressed, low when pressed
 /**
  * switch_states[0] = front left switch
@@ -46,10 +46,10 @@ int stdMotorSpeedsForwardRightAC[4] = {200+20, 193, 148+20, 180}; // set left wh
 int stdMotorSpeedsBackwardLeftAC[4] = {-195, -187-20, -143, -177-20}; // set right wheels at 2% faster
 int stdMotorSpeedsBackwardRightAC[4] = {-195-20, -187, -143-20, -177}; // set left wheels at 2% faster
 
-int slowMotorSpeedsRTL[4] = {-50, 50, 50, -50}; // TODO: change to correct values
-int slowMotorSpeedsLTR[4] = {50, -50, -50, 50}; // TODO: change to correct values
-int slowMotorSpeedsForward[4] = {50, 50, 50, 50}; // TODO: change to correct values
-int slowMotorSpeedsBackward[4] = {-50, -50, -50, -50}; // TODO: change to correct values
+int slowMotorSpeedsRTL[4] = {-195/2, 187/2, 143/2, -177/2}; // TODO: change to correct values
+int slowMotorSpeedsLTR[4] = {200/2, -187/2, -143/2, 180/2}; // TODO: change to correct values
+int slowMotorSpeedsForward[4] = {200/2, 193/2, 148/2, 180/2}; // TODO: change to correct values
+int slowMotorSpeedsBackward[4] = {-195/2, -187/2, -143/2, -177/2}; // TODO: change to correct values
 
 int slowMotorSpeedsForwardLeftAC[4] = {50, 50+10, 50, 50+10}; // set right wheels at 1% faster
 int slowMotorSpeedsForwardRightAC[4] = {50+10, 50, 50+10, 50}; // set left wheels at 1% faster
@@ -59,8 +59,8 @@ int slowMotorSpeedBackwardRightAC[4] = {-50-10, -50, -50-10, -50}; // set left w
 // PinName motor_pwm_pins[4] = {PB_8, PB_9, PB_6, PB_7}; // Not used anywhere, just for reference
 // PinName motor_d_select_pins[4] = {PB_15, PB_14, PB_12, PB_13}; // Not used anywhere, just for reference
 
-PinName sensor_pins_left[5] = {PA_0, PA_1, PA_2, PA_3, PA_4};
-PinName sensor_pins_right[5] = {PA_5, PA_6, PA_7, PB_0, PB_1};
+PinName sensor_pins_left[5] = {PA_5, PA_4, PA_3}; // left front, middle, back #TODO: check!
+PinName sensor_pins_right[5] = {PA_2, PA_1, PA_0}; // right front, middle, back
 
 HardwareSerial Serial2(PB_11, PB_10); // RX, TX
 

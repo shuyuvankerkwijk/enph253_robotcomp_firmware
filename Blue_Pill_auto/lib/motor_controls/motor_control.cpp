@@ -51,7 +51,7 @@ void setupPWM() {
     TIM4->CR1 |= TIM_CR1_CEN;  // Enable TIM4
 }
 
-void updateMotorSpeed(int motorSpeeds[]) {
+void updateMotorSpeed() {
     for (int i = 0; i < 4; i++) {
         uint32_t speed = (motorSpeeds[i] > 0) ? (uint32_t)(motorSpeeds[i]) : (uint32_t)(-motorSpeeds[i]);
 

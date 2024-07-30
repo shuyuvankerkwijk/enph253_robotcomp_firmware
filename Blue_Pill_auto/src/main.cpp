@@ -1,11 +1,20 @@
 #include <Arduino.h>
-#include "globals.h"
 #include "motor_control.h"
+#include "globals.h"
 
+#include "stm32f1xx_hal.h"
+#include "stm32f1xx_hal_rcc.h"
+#include "stm32f1xx_hal_gpio.h"
+bool stop;
 void setup() {
-    pinMode(PC13, OUTPUT);
+    Serial1.begin(9600);  // Set the baud rate to 9600
+    Serial1.println("UART1 Initialized");
+
+    stop = false;
     setupPWM();
-    // Serial1.begin(9600); // begin communication with ESP32
+
+    pinMode(LED_BUILTIN, OUTPUT);
+    
     pinMode(PA0, INPUT_ANALOG); // right front
     pinMode(PA1, INPUT_ANALOG); // right middle
     pinMode(PA2, INPUT_ANALOG); // right back
@@ -15,11 +24,10 @@ void setup() {
     for (int i=0; i<4; i++) {
         motorSpeeds[i] = stdMotorSpeedsForward[i];
     }
+    updateMotorSpeed();
 }
 
 void loop() {
-    digitalWrite(PC13, LOW);
-
     int pa0result = analogRead(PA0);
     int pa1result = analogRead(PA1);
     int pa2result = analogRead(PA2);
@@ -27,39 +35,35 @@ void loop() {
     int pa4result = analogRead(PA4);
     int pa5result = analogRead(PA5);
 
-    // front sensors on tape
-    if (pa0result > Reflectance_threshold || pa3result > Reflectance_threshold){
-        digitalWrite(PC13, HIGH);
-        for (int i=0; i<4; i++) {
-            motorSpeeds[i] = slowMotorSpeedsForward[i];
-        }
-        delay(100);
-    }
-
     // middle sensors on tape
-    if (pa1result > Reflectance_threshold || pa4result > Reflectance_threshold){
-        digitalWrite(PC13, HIGH);
+    if (pa1result > Reflectance_threshold){ //|| pa4result > Reflectance_threshold
         for (int i=0; i<4; i++) {
             motorSpeeds[i] = 0;
         }
-        delay(100);
-    }
-
+        Serial1.println("Middle sensors on tape");
+        stop = true;
+    // front sensors on tape
+    } else if (pa0result > Reflectance_threshold){  //|| pa3result > Reflectance_threshold
+        for (int i=0; i<4; i++) {
+            motorSpeeds[i] = 0; //slowMotorSpeedsForward[i];
+        }
+        stop = true;
+        // Serial1.println("Front sensors on tape");
     // back sensors on tape (reverse)
-    if (pa2result > Reflectance_threshold || pa5result > Reflectance_threshold){
-        digitalWrite(PC13, HIGH);
+    } else if (pa2result > Reflectance_threshold){ //|| pa5result > Reflectance_threshold
         for (int i=0; i<4; i++) {
             motorSpeeds[i] = slowMotorSpeedsBackward[i];
         }
-        delay(100);
+        // Serial1.println("Back sensors on tape");
+    } else if (!stop){
+        for (int i=0; i<4; i++) {
+            motorSpeeds[i] = stdMotorSpeedsForward[i];
+        }
+        // Serial1.println("No sensors on tape");
     }
-
-    Serial1.println("PA0" + pa0result);
-    Serial1.println("PA1" + pa1result);
-    Serial1.println("PA2" + pa2result);
-    Serial1.println("PA3" + pa3result);
-    Serial1.println("PA4" + pa4result);
-    Serial1.println("PA5" + pa5result);
+    // Serial1.println("PA0 " + String(pa0result) + " PA1 " + String(pa1result) + " PA2 " + String(pa2result) + " PA3 " + String(pa3result) + " PA4 " + String(pa4result) + " PA5 " + String(pa5result));
+    updateMotorSpeed();
+    // delay(1000);
 }
 
 // #include <Arduino.h>
