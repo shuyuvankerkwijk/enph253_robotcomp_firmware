@@ -13,14 +13,16 @@ bool switch_states[4] = {false, false, false, false}; // is switch pressed or no
  */
 
 // Front house robot positions
-Position Start(String("Start"), right, 1, 6, tape); //TODO: should start on left (to grab plates)
-Position Cheese(String("Cheese"), right, 1, 6, tape); // name, side, tape_count, y_position, mark
-Position Tomato(String("Tomato"), left, 1, 6, tape);
-Position Cutting(String("Cutting"), left, 2, 24, tape);
-Position Serving_Area(String("Serving_area"), right, 1, 48, IR_beacon);
-Position Cooktop(String("Cooktop"), left, 3, 72, tape);
-Position Plates(String("Plates"), left, 3, 90, tape);
-Position Lettuce(String("Lettuce"), right, 3, 90, tape);
+Position Positions[8] = {
+    Position(String("Start"), right, 1, 6, tape), 
+    Position(String("Cheese"), right, 1, 6, tape), 
+    Position(String("Tomato"), left, 1, 6, tape),
+    Position(String("Cutting"), left, 2, 24, tape),
+    Position(String("Serving_area"), right, 1, 48, IR_beacon),
+    Position(String("Cooktop"), left, 3, 72, tape),
+    Position(String("Plates"), left, 3, 90, tape),
+    Position(String("Lettuce"), right, 3, 90, tape)
+};
 
 int motorSpeeds[4] = {0, 0, 0, 0};
 
@@ -66,5 +68,5 @@ HardwareSerial Serial2(PB_11, PB_10); // RX, TX
 
 bool run = false;
 
-Position* current = &Start; 
-Position* goal = &Start;
+Position* current = Positions; 
+Position* goal = Positions;

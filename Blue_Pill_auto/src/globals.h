@@ -13,14 +13,7 @@ extern bool switch_states[4];
 class Position;
 
 // Front house robot positions
-extern Position Start;
-extern Position Cheese;
-extern Position Tomato;
-extern Position Cutting;
-extern Position Serving_Area;
-extern Position Cooktop;
-extern Position Plates;
-extern Position Lettuce;
+extern Position Positions[8];
 
 extern int motorSpeeds[4];
 extern int stdMotorSpeedsRTL[4];
