@@ -5,7 +5,7 @@
 #include "stm32f1xx_hal.h"
 #include "stm32f1xx_hal_rcc.h"
 #include "stm32f1xx_hal_gpio.h"
-bool stop;
+
 void setup() {
     setupPWM();
     Serial1.begin(9600); // begin communication with ESP32
@@ -44,21 +44,23 @@ void loop() {
                 motorSpeeds[i] = 0;
             }
             Serial1.println("Middle sensors on tape");
-            stop = true;
+            run = false;
+            Serial1.println("run = false");
         // front sensors on tape
         } else if (pa0result > Reflectance_threshold){  //|| pa3result > Reflectance_threshold
             for (int i=0; i<4; i++) {
                 motorSpeeds[i] = 0;
             }
-            stop = true;
-             Serial1.println("Front sensors on tape");
+            run = false;
+            Serial1.println("run = false");
+            Serial1.println("Front sensors on tape");
         // back sensors on tape (reverse)
         } else if (pa2result > Reflectance_threshold){ //|| pa5result > Reflectance_threshold
             for (int i=0; i<4; i++) {
                 motorSpeeds[i] = slowMotorSpeedsBackward[i];
             }
             Serial1.println("Back sensors on tape");
-        } else if (!stop){
+        } else{
             for (int i=0; i<4; i++) {
                 motorSpeeds[i] = stdMotorSpeedsForwardRightAC[i];
             }
