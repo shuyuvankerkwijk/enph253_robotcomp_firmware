@@ -56,5 +56,32 @@ String parse(String message) { //TODO
     else if(message.substring(0,4).equalsIgnoreCase("move")){
 
     }
+    else if(message.substring(0,4).equalsIgnoreCase("ISAT")){
+        if(message.substring(4).equalsIgnoreCase("Start")){
+            current = Positions;
+            return "BP recieved: ISAT:Cheese";
+        }else if(message.substring(4).equalsIgnoreCase("Cheese")){
+            current = Positions + sizeof(Position);
+            return "BP recieved: ISAT:Cheese";
+        }else if(message.substring(4).equalsIgnoreCase("Tomato")){
+            current = Positions + 2*sizeof(Position);
+            return "BP recieved: ISAT:Tomato";
+        }else if(message.substring(4).equalsIgnoreCase("Cutting")){
+            current = Positions + 3*sizeof(Position);
+            return "BP recieved: ISAT:Cutting";
+        }else if(message.substring(4).equalsIgnoreCase("Serving_area")){
+            current = Positions + 4*sizeof(Position);
+            return "BP recieved: ISAT:Serving_area";
+        }else if(message.substring(4).equalsIgnoreCase("Cooktop")){
+            current = Positions + 5*sizeof(Position);
+            return "BP recieved: ISAT:Cooktop";
+        }else if(message.substring(4).equalsIgnoreCase("Plates")){
+            current = Positions + 6*sizeof(Position);
+            return "BP recieved: ISAT:Plates";
+        }else if(message.substring(4).equalsIgnoreCase("Lettuce")){
+            current = Positions + 7*sizeof(Position);
+            return "BP recieved: ISAT:Lettuce";
+        }
+    }
     return "";
 }

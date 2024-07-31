@@ -39,19 +39,22 @@ Path* Position::calculate_path(Position* end) const {
     //define the counter side we are going on
     if(end->side == right){
         result->ac_obj.ac_right=true;
-        result->ac_obj.ac_right=false;
+        result->ac_obj.ac_left=false;
     }else if(end->side == left){
         result->ac_obj.ac_right=false;
-        result->ac_obj.ac_right=true;
+        result->ac_obj.ac_left=true;
     }
 
     //define if we are going forward or backwards
     if(inches_to_travel>0){
         result->ac_obj.forward=true;
         result->ac_obj.backward=false;
-    }else if(inches_to_travel<=0){
+    }else if(inches_to_travel<0){
         result->ac_obj.forward=false;
         result->ac_obj.backward=true;
+    }else{
+        result->ac_obj.forward=false;
+        result->ac_obj.backward=false;
     }
 
     //going to a side from the middle start position.
@@ -63,6 +66,13 @@ Path* Position::calculate_path(Position* end) const {
         }
 
         result->ac_obj.tape_markings = tape_count;
+    }
+
+    for (int i = 1; i < 8; i++) {
+        if(Positions[i]->side == end->side){
+            if(Positions[i]->y_positionend->y_position){
+            }
+        }
     }
 
     return result;
