@@ -1,6 +1,13 @@
 #include "path_progress.h"
 #include "globals.h"
 
+Left_to_right::Left_to_right(){
+    int right_sensors_crossed[3] = {0,0,0}; // 0 is before, 1 is on, and 2 is crossed
+    bool right_crossed = false;
+    int left_sensors_crossed[3] = {0,0,0};
+    bool left_crossed = false;
+}
+
 void Left_to_right::run_cycle() {
     if (!right_crossed) {
         check_right_sensors();
@@ -77,6 +84,13 @@ void Left_to_right::correct_motor_speeds() {
     }
 }
 
+Right_to_left::Right_to_left(){
+    int right_sensors_crossed[3] = {0,0,0}; // 0 is before, 1 is on, and 2 is crossed
+    bool right_crossed = false;
+    int left_sensors_crossed[3] = {0,0,0};
+    bool left_crossed = false;
+}
+
 void Right_to_left::run_cycle() {
     if (!left_crossed) {
         check_left_sensors();
@@ -150,6 +164,24 @@ void Right_to_left::correct_motor_speeds() {
             motorSpeeds[i] = slowMotorSpeedsLTR[i];
         }
     }
+}
+
+Along_counter::Along_counter(){
+    bool done = false;
+
+    bool forward;
+    bool backward;
+    int inches;
+    int tape_markings;
+
+    bool ac_left;
+    bool ac_right;
+
+    int right_sensors_on[3] = {0,0,0}; // 0 is off tape, 1 is on tape
+    int left_sensors_on[3] = {0,0,0};
+
+    int right_sensors_num_crossed[3] = {0,0,0}; // The number of tape markings crossed by the sensor
+    int left_sensors_num_crossed[3] = {0,0,0}; 
 }
 
 void Along_counter::run_cycle() {

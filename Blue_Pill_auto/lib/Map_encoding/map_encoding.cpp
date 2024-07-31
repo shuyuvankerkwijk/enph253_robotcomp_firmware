@@ -7,7 +7,7 @@ Position::Position(String name, Counter side, int tape_count, int y_position, Ma
 }
 
 // Path constructor
-Path::Path(bool left_to_right, bool right_to_left, bool find_beacon, int tape_count, int inches_to_travel)
+Path::Path(bool left_to_right, bool right_to_left, bool find_beacon, int tape_count, int inches_to_travel, bool along_right)
     : left_to_right(left_to_right), right_to_left(right_to_left), find_beacon(find_beacon), done(done) {
     
     if (left_to_right) {
@@ -33,8 +33,8 @@ Path* Position::calculate_path(Position* end) const {
     bool find_beacon = (end->mark == IR_beacon);
     int inches_to_travel = end->y_position - this->y_position;
 
-
-    Path* result = new Path(left_to_right, right_to_left, find_beacon, tape_count, inches_to_travel);
+    bool along_right = (end->side==right);
+    Path* result = new Path(left_to_right, right_to_left, find_beacon, tape_count, inches_to_travel, along_right);
 
     //define the counter side we are going on
     if(end->side == right){

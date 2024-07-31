@@ -56,4 +56,5 @@ String parse(String message) { //TODO
     else if(message.substring(0,4).equalsIgnoreCase("move")){
 
     }
+    return "";
 }
