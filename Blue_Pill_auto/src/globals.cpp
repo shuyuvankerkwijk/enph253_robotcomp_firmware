@@ -64,7 +64,6 @@ int slowMotorSpeedBackwardRightAC[4] = {-50-10, -50, -50-10, -50}; // set left w
 PinName sensor_pins_left[5] = {PA_5, PA_4, PA_3}; // left front, middle, back #TODO: check!
 PinName sensor_pins_right[5] = {PA_2, PA_1, PA_0}; // right front, middle, back
 
-HardwareSerial Serial1(PB_11, PB_10); // RX, TX
 
 bool run = false;
 

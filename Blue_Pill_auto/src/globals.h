@@ -39,8 +39,6 @@ extern int slowMotorSpeedBackwardRightAC[4];
 extern PinName sensor_pins_left[5];
 extern PinName sensor_pins_right[5];
 
-extern HardwareSerial Serial2;
-
 extern bool run;
 
 extern Position* current;

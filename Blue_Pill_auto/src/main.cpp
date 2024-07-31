@@ -106,9 +106,7 @@ void setup() {
 
 void loop() {
     if (Serial1.available()) {
-        char message[50];
-        int length = Serial2.readBytesUntil('\n', message, sizeof(message) - 1);
-        message[length] = '\0';
+        String message = Serial1.readStringUntil('\n');
         Serial1.println(parse(message));
     }
     if (run) {
