@@ -66,15 +66,22 @@ Path* Position::calculate_path(Position* end) const {
         }
 
         result->ac_obj.tape_markings = tape_count;
-    }
-
-    for (int i = 1; i < 8; i++) {
-        if(Positions[i]->side == end->side){
-            if(Positions[i]->y_positionend->y_position){
+    }else{
+        result->ac_obj.tape_markings = 0;
+        for (int i = 1; i < 8; i++) {
+            if(Positions[i]->side == end->side){
+                if(result->ac_obj.forward=true){
+                    if(Positions[i]->y_position > this->y_position&&Positions[i]->y_position<end->y_position){
+                        result->ac_obj.tape_markings++;
+                    }
+                }else if(result->ac_obj.backward=true){
+                    if(Positions[i]->y_position < this->y_position&&Positions[i]->y_position>end->y_position){
+                        result->ac_obj.tape_markings++;
+                    }
+                }
             }
         }
     }
-
     return result;
 }
 
