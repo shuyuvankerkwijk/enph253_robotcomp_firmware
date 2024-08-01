@@ -58,5 +58,6 @@ PinName sensor_pins_right[5] = {PA_2, PA_1, PA_0}; // right front, middle, back
 
 bool run = false;
 
-Position* current = Positions; 
-Position* goal = Positions;
+String begin_move = "Start";
+String end_move = "Start";
+

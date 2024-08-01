@@ -1,9 +1,9 @@
 #include "path_progress.h"
 #include "globals.h"
 
-Left_to_right::Left_to_right(){
+Left_to_right::Left_to_right(bool start){
     int right_sensors_crossed[3] = {0,0,0}; // 0 is before, 1 is on, and 2 is crossed
-    bool right_crossed = false;
+    bool right_crossed = start;
     int left_sensors_crossed[3] = {0,0,0};
     bool left_crossed = false;
 }
@@ -12,10 +12,8 @@ void Left_to_right::run_cycle() {
     if (!right_crossed) {
         check_right_sensors();
         check_left_sensors();
-        correct_motor_speeds();
     } else if (right_crossed) {
         check_left_sensors();
-        correct_motor_speeds();
     }
     if(left_crossed && right_crossed && switch_states[0] && switch_states[2]){ // if both sides crossed and the two switches on the right side clicked, succesfully crossed
         done = true;
@@ -166,7 +164,7 @@ void Right_to_left::correct_motor_speeds() {
     }
 }
 
-Along_counter::Along_counter(){
+Along_counter_lines::Along_counter(){
     bool done = false;
 
     bool forward;
@@ -184,7 +182,7 @@ Along_counter::Along_counter(){
     int left_sensors_num_crossed[3] = {0,0,0}; 
 }
 
-void Along_counter::run_cycle() {
+void Along_counter_lines::run_cycle() {
 
     if (ac_left) {
         check_left_sensors();
@@ -195,7 +193,7 @@ void Along_counter::run_cycle() {
     }
 }
 
-void Along_counter::check_left_sensors() {
+void Along_counter_lines::check_left_sensors() {
     for (int i = 0; i < 5; i++) {
         bool on = analogRead(sensor_pins_left[i] > Reflectance_threshold);
         if (on && left_sensors_on[i] == 0) {
@@ -209,7 +207,7 @@ void Along_counter::check_left_sensors() {
     }
 }
 
-void Along_counter::check_right_sensors() {
+void Along_counter_lines::check_right_sensors() {
     for (int i = 0; i < 5; i++) {
         bool on = analogRead(sensor_pins_right[i] > Reflectance_threshold);
         if (on && right_sensors_on[i] == 0) {
@@ -223,7 +221,7 @@ void Along_counter::check_right_sensors() {
     }
 }
 
-void Along_counter::ac_left_correct_motor_speeds() {
+void Along_counter_lines::ac_left_correct_motor_speeds() {
     if (forward) {
         // 1. If no sensor has crossed the last tape marking, set motor speeds to standard AC_LEFT speeds
         if (left_sensors_num_crossed[0] < (tape_markings-1) &&
@@ -318,7 +316,7 @@ void Along_counter::ac_left_correct_motor_speeds() {
     }
 }
 
-void Along_counter::ac_right_correct_motor_speeds() {
+void Along_counter_lines::ac_right_correct_motor_speeds() {
     if (forward) {
         // 1. If no sensor has crossed the last tape marking, set motor speeds to standard AC_RIGHT speeds
         if (right_sensors_num_crossed[0] < (tape_markings-1) &&

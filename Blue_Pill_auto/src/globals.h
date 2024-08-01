@@ -41,7 +41,8 @@ extern PinName sensor_pins_right[5];
 
 extern bool run;
 
-extern Position* current;
-extern Position* goal;
+extern String begin_move;
+extern String end_move;
+
 
 #endif // GLOBALS_H
