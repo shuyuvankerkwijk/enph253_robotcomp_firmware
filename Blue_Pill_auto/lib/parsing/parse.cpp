@@ -30,6 +30,7 @@ String parse(String message) { //TODO
         run = false;
         return "BP recieved: stop";
     }else if(message.substring(0,5).equalsIgnoreCase("GOTO:")){
+        // RK. De-reference objects at index in array to get ptr instead.
         if(message.substring(5).equalsIgnoreCase("Cheese")){
             goal = Positions + sizeof(Position);
             return "BP recieved: GOTO:Cheese";

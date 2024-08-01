@@ -111,11 +111,14 @@ void loop() {
     }
     if (run) {
         if (!(current->equals(goal)) && (to_execute->done || to_execute==nullptr)) {
-            delete to_execute;
+            // RK. post: you have a new current, you are done exectuting t_execute
+            delete to_execute; // RK. Why do you want to delete the object?
             to_execute = current->calculate_path(goal);
         } else if (!to_execute->done) {
+            // RK. post: you haven't received a new current and you aren't done executing to_execute
             to_execute->execute();
         }
+        // RK. Shouldn't you handle the current->equals(goal) && to_execute->done case? 
     }else{
         for(int i=0;i<4;i++){
             motorSpeeds[i]=0;
