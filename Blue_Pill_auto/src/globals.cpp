@@ -13,16 +13,7 @@ bool switch_states[4] = {false, false, false, false}; // is switch pressed or no
  */
 
 // Front house robot positions
-Position Positions[8] = {
-    Position(String("Start"), right, 1, 6, tape), 
-    Position(String("Cheese"), right, 1, 6, tape), 
-    Position(String("Tomato"), left, 1, 6, tape),
-    Position(String("Cutting"), left, 2, 24, tape),
-    Position(String("Serving_area"), right, 1, 48, IR_beacon),
-    Position(String("Cooktop"), left, 3, 72, tape),
-    Position(String("Plates"), left, 3, 90, tape),
-    Position(String("Lettuce"), right, 3, 90, tape)
-};
+
 
 int motorSpeeds[4] = {0, 0, 0, 0};
 

@@ -112,13 +112,21 @@ void loop() {
     if (run) {
         if (!(current->equals(goal)) && (to_execute->done || to_execute==nullptr)) {
             // RK. post: you have a new current, you are done exectuting t_execute
+            // BH you have a new because to_execute->done is true and goal and current are not equal
             delete to_execute; // RK. Why do you want to delete the object?
+            //BH this is the previous path taht was executed
             to_execute = current->calculate_path(goal);
+            //BH this is the new path that you want to execute
         } else if (!to_execute->done) {
             // RK. post: you haven't received a new current and you aren't done executing to_execute
+            // BH the current path is not done executing so run one cycle of the path.
             to_execute->execute();
+        // BH. superfluous condition since the current gets set to equal to goal in the same condition that to_execute->done is true
+        }else if(current->equals(goal) && to_execute->done){
+            for(int i=0;i<4;i++){
+                motorSpeeds[i]=0;
+            }
         }
-        // RK. Shouldn't you handle the current->equals(goal) && to_execute->done case? 
     }else{
         for(int i=0;i<4;i++){
             motorSpeeds[i]=0;

@@ -8,22 +8,6 @@
 // Forward declaration of Path class
 class Path;
 
-enum Counter { left, right };
-enum Mark { tape, IR_beacon };
-
-class Position {
-public:
-    Position(String name, Counter side, int tape_count, int y_position, Mark mark);
-
-    String name;
-    Counter side;
-    int tape_count;
-    int y_position;
-    Mark mark;
-    Path* calculate_path(Position* end) const;
-    bool equals(Position* goal) const;
-};
-
 class Path {
 public:
     Path(bool left_to_right, bool right_to_left, bool find_beacon, int tape_count, int inches_to_travel, bool along_right);
