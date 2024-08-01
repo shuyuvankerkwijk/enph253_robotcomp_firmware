@@ -13,6 +13,8 @@ public:
     Left_to_right(bool start);
     void execute() override;
 
+    bool done;
+
     int right_sensors_crossed[3]; // 0 is before, 1 is on, and 2 is crossed
     bool right_crossed;
     int left_sensors_crossed[3];
@@ -28,6 +30,8 @@ public:
     Right_to_left(bool start);
     void execute() override;
 
+    bool done;
+
     int right_sensors_crossed[3]; // 0 is before, 1 is on, and 2 is crossed
     bool right_crossed;
     int left_sensors_crossed[3];
@@ -41,6 +45,8 @@ public:
 class Move : public Moves {
 public:
     Move(int inches, bool along_right, bool along_left);
+
+    bool done;
 
     bool along_right_counter;
     bool along_left_counter;
@@ -56,8 +62,11 @@ class Along_right_counter : public Moves {
 public:
     Along_right_counter(bool forward, int tape_markings, bool on_end);
 
+    bool done;
+
     bool forward;
-    bool backward;
+    bool on_end;
+
     int tape_markings;
 
     int right_sensors_on[3]; // 0 is off tape, 1 is on tape
@@ -69,10 +78,13 @@ public:
 
 class Along_left_counter : public Moves {
 public:
-    Along_left_counter();
+    Along_left_counter(bool forward, int tape_markings, bool on_end);
+
+    bool done;
 
     bool forward;
-    bool backward;
+    bool on_end;
+
     int tape_markings;
 
     int left_sensors_on[3]; // 0 is off tape, 1 is on tape

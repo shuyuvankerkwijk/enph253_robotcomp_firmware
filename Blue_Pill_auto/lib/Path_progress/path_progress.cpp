@@ -8,7 +8,7 @@ Left_to_right::Left_to_right(bool start){
     bool left_crossed = false;
 }
 
-void Left_to_right::run_cycle() {
+void Left_to_right::execute() {
     if (!right_crossed) {
         check_right_sensors();
         check_left_sensors();
@@ -51,7 +51,6 @@ void Left_to_right::check_right_sensors() {
                     (right_sensors_crossed[2] == 2));
 }
 
-
 void Left_to_right::correct_motor_speeds() {
     // 1. If none of right side sensors have crossed, then set motor speeds to standard LTR speeds
     if (!(right_sensors_crossed[0] || right_sensors_crossed[1] || right_sensors_crossed[2])) {
@@ -82,14 +81,14 @@ void Left_to_right::correct_motor_speeds() {
     }
 }
 
-Right_to_left::Right_to_left(){
+Right_to_left::Right_to_left(bool start){
     int right_sensors_crossed[3] = {0,0,0}; // 0 is before, 1 is on, and 2 is crossed
     bool right_crossed = false;
     int left_sensors_crossed[3] = {0,0,0};
-    bool left_crossed = false;
+    bool left_crossed = start;
 }
 
-void Right_to_left::run_cycle() {
+void Right_to_left::execute() {
     if (!left_crossed) {
         check_left_sensors();
         check_right_sensors();
@@ -164,84 +163,39 @@ void Right_to_left::correct_motor_speeds() {
     }
 }
 
-Along_counter_lines::Along_counter(){
-    bool done = false;
+Along_right_counter::Along_right_counter(bool forward, int tape_markings, bool on_end)
+    :tape_markings(tape_markings), forward(forward), done(false), on_end(on_end){
 
-    bool forward;
-    bool backward;
-    int inches;
-    int tape_markings;
+    right_sensors_on[0] = 0; 
+    right_sensors_on[1] = 0; 
+    right_sensors_on[2] = 0; 
 
-    bool ac_left;
-    bool ac_right;
-
-    int right_sensors_on[3] = {0,0,0}; // 0 is off tape, 1 is on tape
-    int left_sensors_on[3] = {0,0,0};
-
-    int right_sensors_num_crossed[3] = {0,0,0}; // The number of tape markings crossed by the sensor
-    int left_sensors_num_crossed[3] = {0,0,0}; 
+    right_sensors_num_crossed[0] = 0;
+    right_sensors_num_crossed[1] = 0;
+    right_sensors_num_crossed[2] = 0;
 }
 
-void Along_counter_lines::run_cycle() {
-
-    if (ac_left) {
-        check_left_sensors();
-        ac_left_correct_motor_speeds();
-    }else{
-        check_right_sensors();
-        ac_right_correct_motor_speeds();
-    }
-}
-
-void Along_counter_lines::check_left_sensors() {
-    for (int i = 0; i < 5; i++) {
-        bool on = analogRead(sensor_pins_left[i] > Reflectance_threshold);
-        if (on && left_sensors_on[i] == 0) {
-            left_sensors_on[i] = 1; // Just touched tape
-        } else if (on && left_sensors_on[i] == 1) {
-            // nothing, still on tape
-        } else if (!on && left_sensors_on[i] == 1) {
-            left_sensors_on[i] = 0; // Just left tape
-            left_sensors_num_crossed[i]++;
-        }
-    }
-}
-
-void Along_counter_lines::check_right_sensors() {
-    for (int i = 0; i < 5; i++) {
-        bool on = analogRead(sensor_pins_right[i] > Reflectance_threshold);
-        if (on && right_sensors_on[i] == 0) {
-            right_sensors_on[i] = 1; // Just touched tape
-        } else if (on && right_sensors_on[i] == 1) {
-            // nothing, still on tape
-        } else if (!on && right_sensors_on[i] == 1) {
-            right_sensors_on[i] = 0; // Just left tape
-            right_sensors_num_crossed[i]++;
-        }
-    }
-}
-
-void Along_counter_lines::ac_left_correct_motor_speeds() {
-    if (forward) {
+void Along_right_counter::execute() {
+if (forward) {
         // 1. If no sensor has crossed the last tape marking, set motor speeds to standard AC_LEFT speeds
-        if (left_sensors_num_crossed[0] < (tape_markings-1) &&
-            left_sensors_num_crossed[1] < (tape_markings-1) &&
-            left_sensors_num_crossed[2] < (tape_markings-1)) {
+        if (right_sensors_num_crossed[0] < (tape_markings-1) &&
+            right_sensors_num_crossed[1] < (tape_markings-1) &&
+            right_sensors_num_crossed[2] < (tape_markings-1)) {
             for (int i = 0; i < 4; i++) {
                 motorSpeeds[i] = stdMotorSpeedsForwardLeftAC[i];
             }
         }
 
         // 2. If foremost left sensor has crossed desired tape marking or is on it, slow motors
-        if (left_sensors_num_crossed[2] == tape_markings ||
-            (left_sensors_num_crossed[2] == (tape_markings-1) && left_sensors_on[2] == 1)) { // TODO TODO!!! TODO!!! check w/ benedikt if this is forward sensor and if tape_markings - 1 is correct
+        if (right_sensors_num_crossed[2] == tape_markings ||
+            (right_sensors_num_crossed[2] == (tape_markings-1) && right_sensors_on[2] == 1)) { // TODO TODO!!! TODO!!! check w/ benedikt if this is forward sensor and if tape_markings - 1 is correct
             for (int i = 0; i < 4; i++) {
                 motorSpeeds[i] = slowMotorSpeedsForwardLeftAC[i];
             }
         }
 
         // 3. If middle sensor has crossed last tape marking and is on tape, arrived where wanted
-        if (left_sensors_num_crossed[1] == (tape_markings-1) && left_sensors_on[1] == 1) { // TODO add more checks for the other motors to ensure final destination
+        if (right_sensors_num_crossed[1] == (tape_markings-1) && right_sensors_on[1] == 1) { // TODO add more checks for the other motors to ensure final destination
             for (int i = 0; i < 4; i++) {
                 motorSpeeds[i] = 0;
             }
@@ -268,26 +222,26 @@ void Along_counter_lines::ac_left_correct_motor_speeds() {
                 motorSpeeds[i] = slowMotorSpeedsRTL[i];
             }
         }
-    } else if (backward) {
+    } else {
         // 1. If no sensor has crossed the last tape marking, set motor speeds to standard AC_RIGHT speeds
-        if (left_sensors_num_crossed[0] < (tape_markings-1) &&
-            left_sensors_num_crossed[1] < (tape_markings-1) &&
-            left_sensors_num_crossed[2] < (tape_markings-1)) {
+        if (right_sensors_num_crossed[0] < (tape_markings-1) &&
+            right_sensors_num_crossed[1] < (tape_markings-1) &&
+            right_sensors_num_crossed[2] < (tape_markings-1)) {
             for (int i = 0; i < 4; i++) {
                 motorSpeeds[i] = stdMotorSpeedsBackwardLeftAC[i];
             }
         }
 
         // 2. If backmost left sensor has crossed desired tape marking or is on it, slow motors
-        if (left_sensors_num_crossed[0] == tape_markings ||
-            (left_sensors_num_crossed[0] == (tape_markings-1) && left_sensors_on[0] == 1)) { // TODO TODO!!! TODO!!! check w/ benedikt if this is forward sensor and if tape_markings - 1 is correct
+        if (right_sensors_num_crossed[0] == tape_markings ||
+            (right_sensors_num_crossed[0] == (tape_markings-1) && right_sensors_on[0] == 1)) { // TODO TODO!!! TODO!!! check w/ benedikt if this is forward sensor and if tape_markings - 1 is correct
             for (int i = 0; i < 4; i++) {
                 motorSpeeds[i] = slowMotorSpeedsBackwardLeftAC[i];
             }
         }
 
         // 3. If middle sensor has crossed last tape marking and is on tape, arrived where wanted
-        if (left_sensors_num_crossed[1] == (tape_markings-1) && left_sensors_on[1] == 1) { // TODO add more checks for the other motors to ensure final destination
+        if (right_sensors_num_crossed[1] == (tape_markings-1) && right_sensors_on[1] == 1) { // TODO add more checks for the other motors to ensure final destination
             for (int i = 0; i < 4; i++) {
                 motorSpeeds[i] = 0;
             }
@@ -316,27 +270,54 @@ void Along_counter_lines::ac_left_correct_motor_speeds() {
     }
 }
 
-void Along_counter_lines::ac_right_correct_motor_speeds() {
+void Along_right_counter::check_right_sensors() {
+    for (int i = 0; i < 5; i++) {
+        bool on = analogRead(sensor_pins_right[i] > Reflectance_threshold);
+        if (on && right_sensors_on[i] == 0) {
+            right_sensors_on[i] = 1; // Just touched tape
+        } else if (on && right_sensors_on[i] == 1) {
+            // nothing, still on tape
+        } else if (!on && right_sensors_on[i] == 1) {
+            right_sensors_on[i] = 0; // Just left tape
+            right_sensors_num_crossed[i]++;
+        }
+    }
+}
+
+Along_left_counter::Along_left_counter(bool forward, int tape_markings, bool on_end)
+    :tape_markings(tape_markings), forward(forward), done(false), on_end(on_end){
+
+    left_sensors_on[0] = 0; 
+    left_sensors_on[1] = 0; 
+    left_sensors_on[2] = 0; 
+
+    left_sensors_num_crossed[0] = 0;
+    left_sensors_num_crossed[1] = 0;
+    left_sensors_num_crossed[2] = 0;
+}
+
+void Along_left_counter::execute() {
+
     if (forward) {
         // 1. If no sensor has crossed the last tape marking, set motor speeds to standard AC_RIGHT speeds
-        if (right_sensors_num_crossed[0] < (tape_markings-1) &&
-            right_sensors_num_crossed[1] < (tape_markings-1) &&
-            right_sensors_num_crossed[2] < (tape_markings-1)) {
+        if (left_sensors_num_crossed[0] < (tape_markings-1) &&
+            left_sensors_num_crossed[1] < (tape_markings-1) &&
+            left_sensors_num_crossed[2] < (tape_markings-1)) {
             for (int i = 0; i < 4; i++) {
                 motorSpeeds[i] = stdMotorSpeedsForwardRightAC[i];
             }
         }
 
         // 2. If foremost right sensor has crossed desired tape marking or is on it, slow motors
-        if (right_sensors_num_crossed[2] == tape_markings ||
-            (right_sensors_num_crossed[2] == (tape_markings-1) && right_sensors_on[2] == 1)) { // TODO TODO!!! TODO!!! check w/ benedikt if this is forward sensor and if tape_markings - 1 is correct
+        if (left_sensors_num_crossed[2] == tape_markings ||
+            (left_sensors_num_crossed[2] == (tape_markings-1) && left_sensors_on[2] == 1)) { // TODO TODO!!! TODO!!! check w/ benedikt if this is forward sensor and if tape_markings - 1 is correct
             for (int i = 0; i < 4; i++) {
                 motorSpeeds[i] = slowMotorSpeedsForwardRightAC[i];
             }
         }
 
         // 3. If middle sensor has crossed last tape marking and is on tape, arrived where wanted
-        if (right_sensors_num_crossed[1] == (tape_markings-1) && right_sensors_on[1] == 1) { // TODO add more checks for the other motors to ensure final destination
+        if (left_sensors_num_crossed[1] == (tape_markings-1) && left_sensors_on[1] == 1) { // TODO add more checks for the other motors to ensure final destination
             for (int i = 0; i < 4; i++) {
                 motorSpeeds[i] = 0;
             }
@@ -368,26 +349,26 @@ void Along_counter_lines::ac_right_correct_motor_speeds() {
                 motorSpeeds[i] = slowMotorSpeedsLTR[i];
             }
         }
-    } else if (backward) {
+    } else {
         // 1. If no sensor has crossed the last tape marking, set motor speeds to standard AC_RIGHT speeds
-        if (right_sensors_num_crossed[0] < (tape_markings-1) &&
-            right_sensors_num_crossed[1] < (tape_markings-1) &&
-            right_sensors_num_crossed[2] < (tape_markings-1)) {
+        if (left_sensors_num_crossed[0] < (tape_markings-1) &&
+            left_sensors_num_crossed[1] < (tape_markings-1) &&
+            left_sensors_num_crossed[2] < (tape_markings-1)) {
             for (int i = 0; i < 4; i++) {
                 motorSpeeds[i] = stdMotorSpeedsBackwardRightAC[i];
             }
         }
 
         // 2. If backmost right sensor has crossed desired tape marking or is on it, slow motors
-        if (right_sensors_num_crossed[0] == tape_markings ||
-            (right_sensors_num_crossed[0] == (tape_markings-1) && right_sensors_on[0] == 1)) { // TODO TODO!!! TODO!!! check w/ benedikt if this is forward sensor and if tape_markings - 1 is correct
+        if (left_sensors_num_crossed[0] == tape_markings ||
+            (left_sensors_num_crossed[0] == (tape_markings-1) && left_sensors_on[0] == 1)) { // TODO TODO!!! TODO!!! check w/ benedikt if this is forward sensor and if tape_markings - 1 is correct
             for (int i = 0; i < 4; i++) {
                 motorSpeeds[i] = slowMotorSpeedBackwardRightAC[i];
             }
         }
 
         // 3. If middle sensor has crossed last tape marking and is on tape, arrived where wanted
-        if (right_sensors_num_crossed[1] == (tape_markings-1) && right_sensors_on[1] == 1) { // TODO add more checks for the other motors to ensure final destination
+        if (left_sensors_num_crossed[1] == (tape_markings-1) && left_sensors_on[1] == 1) { // TODO add more checks for the other motors to ensure final destination
             for (int i = 0; i < 4; i++) {
                 motorSpeeds[i] = 0;
             }
@@ -418,6 +399,20 @@ void Along_counter_lines::ac_right_correct_motor_speeds() {
             {
                 motorSpeeds[i] = slowMotorSpeedsLTR[i];
             }
+        }
+    }
+}
+
+void Along_left_counter::check_left_sensors() {
+    for (int i = 0; i < 5; i++) {
+        bool on = analogRead(sensor_pins_left[i] > Reflectance_threshold);
+        if (on && left_sensors_on[i] == 0) {
+            left_sensors_on[i] = 1; // Just touched tape
+        } else if (on && left_sensors_on[i] == 1) {
+            // nothing, still on tape
+        } else if (!on && left_sensors_on[i] == 1) {
+            left_sensors_on[i] = 0; // Just left tape
+            left_sensors_num_crossed[i]++;
         }
     }
 }

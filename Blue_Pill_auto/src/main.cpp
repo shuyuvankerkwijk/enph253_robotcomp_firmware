@@ -110,7 +110,7 @@ void loop() {
         Serial1.println(parse(message));
     }
     if (run) {
-        if (!begin_move.equalsIgnoreCase(end_move)&&!to_execute.done) {
+        if (!begin_move.equalsIgnoreCase(end_move)&&(to_execute->done||to_execute==nullptr)) {
             
         } else if (!to_execute->done) {
         }else if(begin_move.equalsIgnoreCase(end_move) && to_execute->done){

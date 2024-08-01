@@ -9,12 +9,6 @@
 extern int Reflectance_threshold;
 extern bool switch_states[4];
 
-// Forward declaration of Position class
-class Position;
-
-// Front house robot positions
-extern Position Positions[8];
-
 extern int motorSpeeds[4];
 extern int stdMotorSpeedsRTL[4];
 extern int stdMotorSpeedsLTR[4];

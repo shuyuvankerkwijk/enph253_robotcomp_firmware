@@ -4,17 +4,15 @@
 #include <Arduino.h>
 #include <string.h>
 #include "path_progress.h"
-#include <iostream>
-#include <vector>
-#include <memory>
 
 class Path {
 public:
     Path(String start, String end);
+    ~Path(); // Destructor to clean up dynamically allocated memory
     void execute();
     bool done;
 
-    std::vector<std::unique_ptr<Moves>> move_series;
+    Moves* moves_series[6] = {nullptr}; // Initialize to nullptr
 };
 
 #endif // MAP_ENCODING_H
