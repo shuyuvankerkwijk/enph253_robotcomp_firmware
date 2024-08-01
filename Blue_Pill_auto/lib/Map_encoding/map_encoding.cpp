@@ -135,10 +135,15 @@ Path::~Path() {
 }
 
 void Path::execute() {
+    bool is_done = true;
     for (int i = 0; i < 6; ++i) {
         if (moves_series[i] != nullptr && !moves_series[i]->done) {
+            is_done = false;
             moves_series[i]->execute();
             break; // Execute only the first move that is not done
         }
     }
+
+    done = is_done;
+    
 }

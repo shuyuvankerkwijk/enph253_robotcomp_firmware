@@ -34,8 +34,8 @@ void setupPWM() {
                   (GPIO_CRH_MODE13_1 | GPIO_CRH_MODE13_0);
 
     // Setup TIM4 for PWM on channels 1, 2, 3, and 4
-    TIM4->PSC = 7200 - 1;  // Prescaler to achieve 10kHz
-    TIM4->ARR = 1000 - 1;  // Auto-reload for 100Hz PWM frequency
+    TIM4->PSC = 720 - 1;  // Prescaler to achieve 1000 Hz
+    TIM4->ARR = 100 - 1;  // Auto-reload for 1kHz PWM frequency
 
     // Configure PWM mode and enable channels
     TIM4->CCMR1 = (TIM_CCMR1_OC1M_2 | TIM_CCMR1_OC1M_1 | TIM_CCMR1_OC1PE) |  // PWM mode 1 for CH1
