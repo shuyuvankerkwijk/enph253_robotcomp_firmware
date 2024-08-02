@@ -417,6 +417,11 @@ void Along_left_counter::check_left_sensors() {
     }
 }
 
+Move::Move(int inches, bool along_right, bool along_left, bool forward)
+    :inches(inches), along_right_counter(along_right), along_left_counter(along_left), forward(forward), done(false){
+    start_time = 0;
+}
+
 void Move::execute(){
     if(!started){
         start_time = millis();

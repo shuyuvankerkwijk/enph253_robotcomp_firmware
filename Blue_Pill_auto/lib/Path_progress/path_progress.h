@@ -44,7 +44,7 @@ public:
 
 class Move : public Moves {
 public:
-    Move(u_int8_t inches, bool along_right, bool along_left, bool forward);
+    Move(int inches, bool along_right, bool along_left, bool forward);
 
     bool started = false;
     bool done;
@@ -53,8 +53,8 @@ public:
     bool along_left_counter;
     bool forward;
 
-    u_int8_t inches;
-    u_int64_t start_time;
+    int inches;
+    int start_time;
 
     void execute() override;
 };
@@ -68,7 +68,7 @@ public:
     bool forward;
     bool on_end;
 
-    u_int8_t tape_markings;
+    int tape_markings;
 
     int right_sensors_on[3]; // 0 is off tape, 1 is on tape
     int right_sensors_num_crossed[3]; // The number of tape markings crossed by the sensor
