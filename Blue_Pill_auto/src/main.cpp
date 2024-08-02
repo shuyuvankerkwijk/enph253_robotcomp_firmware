@@ -12,7 +12,6 @@
 //             for (int i=0; i<4; i++) {
 //                 motorSpeeds[i] = 0;
 //             }
-//             run = false;
 //             Serial1.println("run = false");
 //             Serial1.println("Front sensors on tape");
 //         // back sensors on tape (reverse)
@@ -44,11 +43,6 @@
 #include "globals.h"
 #include "corner_switches.h"
 
-// Include HAL headers
-#include "stm32f1xx_hal.h"
-#include "stm32f1xx_hal_rcc.h"
-#include "stm32f1xx_hal_gpio.h"
-
 Path* to_execute = nullptr;
 
 void setup() {
@@ -72,9 +66,11 @@ void loop() {
     }
     if (run) {
         if (!begin_move.equalsIgnoreCase(end_move)&&(to_execute->done||to_execute==nullptr)) {
-            
+            delete to_execute;
+            to_execute = new Path(begin_move, end_move);
         } else if (!to_execute->done) {
-        }else if(begin_move.equalsIgnoreCase(end_move) && to_execute->done){
+            to_execute->execute();
+        }else{
             for(int i=0;i<4;i++){
                 motorSpeeds[i]=0;
             }

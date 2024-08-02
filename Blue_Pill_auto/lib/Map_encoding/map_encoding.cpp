@@ -10,7 +10,7 @@ Path::Path(String start, String end)
     if (start.equalsIgnoreCase("Start")) {
         if (end.equalsIgnoreCase("Cheese")) {
             // Move up 1s, move to right counter, move slow down along right counter
-            moves_series[0] = new Move(5, false, false); // Use 'new' to allocate dynamically
+            moves_series[0] = new Move(5, false, false); 
             moves_series[1] = new Left_to_right(true);
             moves_series[2] = new Along_right_counter(false, 1, true);
         } else if (end.equalsIgnoreCase("Tomato")) {

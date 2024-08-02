@@ -15,6 +15,7 @@ void Left_to_right::execute() {
     } else if (right_crossed) {
         check_left_sensors();
     }
+    correct_motor_speeds();
     if(left_crossed && right_crossed && switch_states[0] && switch_states[2]){ // if both sides crossed and the two switches on the right side clicked, succesfully crossed
         done = true;
     }
@@ -92,11 +93,10 @@ void Right_to_left::execute() {
     if (!left_crossed) {
         check_left_sensors();
         check_right_sensors();
-        correct_motor_speeds();
     } else if (left_crossed) {
         check_left_sensors();
-        correct_motor_speeds();
     }
+    correct_motor_speeds();
     if(right_crossed && switch_states[1]&&switch_states[3]){
         done = true;
     }
@@ -413,6 +413,47 @@ void Along_left_counter::check_left_sensors() {
         } else if (!on && left_sensors_on[i] == 1) {
             left_sensors_on[i] = 0; // Just left tape
             left_sensors_num_crossed[i]++;
+        }
+    }
+}
+
+void Move::execute(){
+    if(!started){
+        start_time = millis();
+        started = true;
+    }
+
+    if((millis()-start_time)*100>=inches){
+        done = true;
+    }else if(along_left_counter){
+        if(forward){
+            for (int i = 0; i < 3; i++) {
+                motorSpeeds[i] = stdMotorSpeedsForwardLeftAC[i];
+            }
+        }else{
+            for (int i = 0; i < 3; i++) {
+                motorSpeeds[i] = stdMotorSpeedsBackwardLeftAC[i];
+            }
+        }
+    }else if(along_right_counter){
+        if(forward){
+            for (int i = 0; i < 3; i++) {
+                motorSpeeds[i] = stdMotorSpeedsForwardRightAC[i];
+            }
+        }else{
+            for (int i = 0; i < 3; i++) {
+                motorSpeeds[i] = stdMotorSpeedsBackwardRightAC[i];
+            }
+        }
+    }else{
+        if(forward){
+            for (int i = 0; i < 3; i++) {
+                motorSpeeds[i] = stdMotorSpeedsForward[i];
+            }
+        }else{
+            for (int i = 0; i < 3; i++) {
+                motorSpeeds[i] = stdMotorSpeedsBackward[i];
+            }
         }
     }
 }
