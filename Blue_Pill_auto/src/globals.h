@@ -6,10 +6,21 @@
 #include "path_progress.h"
 
 // Declare global variables
+
+// extern HardwareSerial Serial1;
+
 extern int Reflectance_threshold;
 extern bool switch_states[4];
 
+extern PinName motor_pwm_pins[4]; 
+extern int motor_pwm_pins_ints[4];
+extern int motor_d_select_pins[4];
+extern int switch_pins[4];
+extern int sensor_pins_left[3];
+extern int sensor_pins_right[3];
+
 extern int motorSpeeds[4];
+
 extern int stdMotorSpeedsRTL[4];
 extern int stdMotorSpeedsLTR[4];
 extern int stdMotorSpeedsForward[4];
@@ -28,10 +39,9 @@ extern int slowMotorSpeedsBackward[4];
 extern int slowMotorSpeedsForwardLeftAC[4];
 extern int slowMotorSpeedsForwardRightAC[4];
 extern int slowMotorSpeedsBackwardLeftAC[4];
-extern int slowMotorSpeedBackwardRightAC[4];
+extern int slowMotorSpeedsBackwardRightAC[4];
 
-extern PinName sensor_pins_left[5];
-extern PinName sensor_pins_right[5];
+
 
 extern bool run;
 

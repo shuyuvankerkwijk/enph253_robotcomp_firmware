@@ -47,38 +47,53 @@ Path* to_execute = nullptr;
 
 void setup() {
     // Set up motor PWM and digital output pins for motor control
-    setup_switch_interrupts();
+    // setup_switch_interrupts();
     setupPWM();
-    updateMotorSpeed();
 
     Serial1.begin(9600); // begin communication with ESP32
 
-    for (int i = 0; i < 5; i++) {
-        pinMode(sensor_pins_left[i], INPUT_ANALOG);
-        pinMode(sensor_pins_right[i], INPUT_ANALOG);
+    for (int i = 0; i < 3; i++) {
+        pinMode(sensor_pins_left[i], INPUT);
+        pinMode(sensor_pins_right[i], INPUT);
     }
 }
 
+Along_right_counter to_do = Along_right_counter(true, 1, false);
+
 void loop() {
-    if (Serial1.available()) {
-        String message = Serial1.readStringUntil('\n');
-        Serial1.println(parse(message));
-    }
-    if (run) {
-        if (!begin_move.equalsIgnoreCase(end_move)&&(to_execute->done||to_execute==nullptr)) {
-            delete to_execute;
-            to_execute = new Path(begin_move, end_move);
-        } else if (!to_execute->done) {
-            to_execute->execute();
-        }else{
-            for(int i=0;i<4;i++){
-                motorSpeeds[i]=0;
-            }
-        }
-    }else{
-        for(int i=0;i<4;i++){
-            motorSpeeds[i]=0;
-        }
-    }
+    Serial1.println("Looping");
+    // Set motorSpeeds to a value between 0 and 1000, converted to 12-bit resolution for PWM signal
+    // for (int i = 0; i < 4; i++) {
+    //     motorSpeeds[i] = 500; // Set to 500 for a 50% duty cycle (out of 1000) // can try changing back to 2000
+    // }
+    motorSpeeds[3] = 500;
     updateMotorSpeed();
+    if(!to_do.done){
+        to_do.execute();
+    }
+
+    // Add a delay to observe the change (optional)
+    delay(10); // 1 second delay
+
+    // if (Serial1.available()) {
+    //     String message = Serial1.readStringUntil('\n');
+    //     Serial1.println(parse(message));
+    // }
+    // if (run) {
+    //     if (!begin_move.equalsIgnoreCase(end_move)&&(to_execute->done||to_execute==nullptr)) {
+    //         delete to_execute;
+    //         to_execute = new Path(begin_move, end_move);
+    //     } else if (!to_execute->done) {
+    //         to_execute->execute();
+    //     }else{
+    //         for(int i=0;i<4;i++){
+    //             motorSpeeds[i]=0;
+    //         }
+    //     }
+    // }else{
+    //     for(int i=0;i<4;i++){
+    //         motorSpeeds[i]=0;
+    //     }
+    // }
+    // updateMotorSpeed();
 }

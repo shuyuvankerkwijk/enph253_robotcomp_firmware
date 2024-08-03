@@ -2,18 +2,18 @@
 #include "globals.h"
 
 void setup_switch_interrupts(){ // Corrected function name
-    pinMode(PIN_F_R, INPUT_PULLUP);
-    attachInterrupt(digitalPinToInterrupt(PIN_F_R), handle_switch_F_R_Rising, RISING);
-    attachInterrupt(digitalPinToInterrupt(PIN_F_R), handle_switch_F_R_Falling, FALLING);
-    pinMode(PIN_F_L, INPUT_PULLUP);
-    attachInterrupt(digitalPinToInterrupt(PIN_F_L), handle_switch_F_L_Rising, RISING);
-    attachInterrupt(digitalPinToInterrupt(PIN_F_L), handle_switch_F_L_Falling, FALLING);
-    pinMode(PIN_B_R, INPUT_PULLUP);
-    attachInterrupt(digitalPinToInterrupt(PIN_B_R), handle_switch_B_R_Rising, RISING);
-    attachInterrupt(digitalPinToInterrupt(PIN_B_R), handle_switch_B_R_Falling, FALLING);
-    pinMode(PIN_B_L, INPUT_PULLUP);
-    attachInterrupt(digitalPinToInterrupt(PIN_B_L), handle_switch_B_L_Rising, RISING);
-    attachInterrupt(digitalPinToInterrupt(PIN_B_L), handle_switch_B_L_Falling, FALLING);
+    pinMode(switch_pins[0], INPUT_PULLUP);
+    attachInterrupt(digitalPinToInterrupt(switch_pins[0]), handle_switch_F_R_Rising, RISING);
+    attachInterrupt(digitalPinToInterrupt(switch_pins[0]), handle_switch_F_R_Falling, FALLING);
+    pinMode(switch_pins[1], INPUT_PULLUP);
+    attachInterrupt(digitalPinToInterrupt(switch_pins[1]), handle_switch_F_L_Rising, RISING);
+    attachInterrupt(digitalPinToInterrupt(switch_pins[1]), handle_switch_F_L_Falling, FALLING);
+    pinMode(switch_pins[2], INPUT_PULLUP);
+    attachInterrupt(digitalPinToInterrupt(switch_pins[2]), handle_switch_B_R_Rising, RISING);
+    attachInterrupt(digitalPinToInterrupt(switch_pins[2]), handle_switch_B_R_Falling, FALLING);
+    pinMode(switch_pins[3], INPUT_PULLUP);
+    attachInterrupt(digitalPinToInterrupt(switch_pins[3]), handle_switch_B_L_Rising, RISING);
+    attachInterrupt(digitalPinToInterrupt(switch_pins[3]), handle_switch_B_L_Falling, FALLING);
 }
 
 void handle_switch_F_R_Rising(){

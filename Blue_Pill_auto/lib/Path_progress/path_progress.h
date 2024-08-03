@@ -1,6 +1,8 @@
 #ifndef PATH_PROGRESS_H
 #define PATH_PROGRESS_H
 
+#include "Arduino.h"
+
 class Moves {
 public:
     Moves() : done(false) {}
