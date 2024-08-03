@@ -44,13 +44,14 @@
 #include "corner_switches.h"
 
 Path* to_execute = nullptr;
+HardwareSerial Serial3(PB11, PB10);
 
 void setup() {
-    // Set up motor PWM and digital output pins for motor control
+    // Set up motor PWM and digital outpuasc t pins for motor control
     // setup_switch_interrupts();
     setupPWM();
 
-    Serial1.begin(9600); // begin communication with ESP32
+    Serial3.begin(9600); // begin communication with ESP32
 
     for (int i = 0; i < 3; i++) {
         pinMode(sensor_pins_left[i], INPUT);
@@ -58,22 +59,20 @@ void setup() {
     }
 }
 
-Along_right_counter to_do = Along_right_counter(true, 1, false);
+Along_left_counter to_do = Along_left_counter(true, 1, false);
 
 void loop() {
-    Serial1.println("Looping");
+    Serial3.println("Looping");
     // Set motorSpeeds to a value between 0 and 1000, converted to 12-bit resolution for PWM signal
     // for (int i = 0; i < 4; i++) {
     //     motorSpeeds[i] = 500; // Set to 500 for a 50% duty cycle (out of 1000) // can try changing back to 2000
     // }
-    motorSpeeds[3] = 500;
-    updateMotorSpeed();
     if(!to_do.done){
         to_do.execute();
     }
-
+    updateMotorSpeed();
     // Add a delay to observe the change (optional)
-    delay(10); // 1 second delay
+    delay(10); // 10ms delay
 
     // if (Serial1.available()) {
     //     String message = Serial1.readStringUntil('\n');

@@ -8,6 +8,7 @@
 // Declare global variables
 
 // extern HardwareSerial Serial1;
+extern HardwareSerial Serial_to_ESP;
 
 extern int Reflectance_threshold;
 extern bool switch_states[4];
