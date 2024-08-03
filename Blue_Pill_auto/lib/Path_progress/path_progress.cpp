@@ -93,13 +93,17 @@ Right_to_left::Right_to_left(bool start){
 void Right_to_left::execute() {
     if (!left_crossed) {
         check_left_sensors();
-        check_right_sensors();
     } else if (left_crossed) {
-        check_left_sensors();
+        check_right_sensors();
     }
+    Serial3.println("RIGHT CROSSED: " + String(right_crossed));
+    Serial3.println("LEFT CROSSED: " + String(left_crossed));
     correct_motor_speeds();
-    if(right_crossed && switch_states[1]&&switch_states[3]){
+    if(right_crossed){// && switch_states[1]&&switch_states[3]
         done = true;
+        for (int i = 0; i < 4; i++) {
+            motorSpeeds[i] = 0;
+        }
     }
 }
 
@@ -179,28 +183,26 @@ Along_right_counter::Along_right_counter(bool forward, int tape_markings, bool o
 
 void Along_right_counter::execute() {
     check_right_sensors();
-    Serial3.println("Sensor values: back: " + String(sensor_pins_right[0]) + " middle: " + String(sensor_pins_right[1]) + " front: " + String(sensor_pins_right[2]));
+    Serial3.println("RIGHT SENSORS: " + String(analogRead(sensor_pins_right[0])) + " " + String(analogRead(sensor_pins_right[1])) + " " + String(analogRead(sensor_pins_right[2])));
     if (forward) {
-        // 1. If no sensor has crossed the last tape marking, set motor speeds to standard AC_LEFT speeds
-        if (right_sensors_num_crossed[0] <= (tape_markings-1) &&
-            right_sensors_num_crossed[1] <= (tape_markings-1) &&
-            right_sensors_num_crossed[2] <= (tape_markings-1)) {
+        // 1. If foremost right sensor is on desired tape marking, stop motors
+        if (right_sensors_num_crossed[2] == (tape_markings-1) && right_sensors_on[2] == 1) { 
             for (int i = 0; i < 4; i++) {
-                motorSpeeds[i] = stdMotorSpeedsForwardLeftAC[i];
-            }
-            Serial3.println("No sensors crossed");
-        }
-
-        // 2. If foremost right sensor is on desired tape marking, slow motors
-        if (right_sensors_num_crossed[2] == (tape_markings-1) && right_sensors_on[2] == 1) { // TODO CHECK!!! -- used to be 'or crossed' --right_sensors_num_crossed[2] == tape_markings ||
-            for (int i = 0; i < 4; i++) {
-                motorSpeeds[i] = slowMotorSpeedsForwardLeftAC[i];
+                motorSpeeds[i] = 0; // slowMotorSpeedsForwardRightAC[i];
             }
             Serial3.println("Foremost sensor on tape");
         }
 
-        // 3. If middle sensor has crossed last tape marking and is on tape, arrived where wanted
-        if (right_sensors_num_crossed[1] == (tape_markings-1) && right_sensors_on[1] == 1) { // TODO add more checks for the other motors to ensure final destination
+        // 2. If backmost right sensor is on desired tape marking, run motors in reverse slow
+        else if (right_sensors_num_crossed[0] >= (tape_markings-1) && right_sensors_on[0] == 1) { 
+            for (int i = 0; i < 4; i++) {
+                motorSpeeds[i] = slowMotorSpeedsBackwardRightAC[i];
+            }
+            Serial3.println("Backmost sensor on tape");
+        }
+
+        // 3. If middle sensor is on desired tape marking, stop motors
+        else if (right_sensors_num_crossed[1] == (tape_markings-1) && right_sensors_on[1] == 1) { // TODO add more checks for the other motors to ensure final destination
             for (int i = 0; i < 4; i++) {
                 motorSpeeds[i] = 0;
             }
@@ -208,13 +210,15 @@ void Along_right_counter::execute() {
             Serial3.println("Middle sensor on tape");
         }
 
-        // 4. If backmost sensor is on desired tape marker, go in reverse slowly
-        if (right_sensors_num_crossed[0] >= (tape_markings-1) && right_sensors_on[0] == 1) { 
+        // 4. If no sensor has crossed the last tape marking, set motor speeds to standard AC_RIGHT speeds
+        else if (right_sensors_num_crossed[0] <= (tape_markings-1) &&
+            right_sensors_num_crossed[1] <= (tape_markings-1) &&
+            right_sensors_num_crossed[2] <= (tape_markings-1)) {
             for (int i = 0; i < 4; i++) {
-                motorSpeeds[i] = slowMotorSpeedsBackwardRightAC[i];
+                motorSpeeds[i] = stdMotorSpeedsForwardRightAC[i];
             }
-            Serial3.println("Backmost sensor on tape");
-        }
+            Serial3.println("No sensors crossed");
+        }        
 
         // // Handle switches
         // if(switch_states[0]&&switch_states[2]){
@@ -233,7 +237,7 @@ void Along_right_counter::execute() {
         //         motorSpeeds[i] = slowMotorSpeedsRTL[i];
         //     }
         // }
-
+    }
     // } else { // BACKWWARD
 
     //     // 1. If no sensor has crossed the last tape marking, set motor speeds to standard AC_RIGHT_BACKWARD speeds
@@ -266,7 +270,6 @@ void Along_right_counter::execute() {
     //             motorSpeeds[i] = slowMotorSpeedsForwardRightAC[i];
     //         }
     //     }
-
     //     // // Handle switches
     //     // if(switch_states[0]&&switch_states[2]){
     //     //     // change nothing from previous logic
@@ -283,12 +286,11 @@ void Along_right_counter::execute() {
     //     //         motorSpeeds[i] = slowMotorSpeedsRTL[i];
     //     //     }
     //     // }
-    }
 }
 
 void Along_right_counter::check_right_sensors() {
     for (int i = 0; i < 3; i++) {
-        bool on = analogRead(sensor_pins_right[i] > Reflectance_threshold);
+        bool on = analogRead(sensor_pins_right[i]) > Reflectance_threshold;
         if (on && right_sensors_on[i] == 0) {
             right_sensors_on[i] = 1; // Just touched tape
         } else if (on && right_sensors_on[i] == 1) {
@@ -299,6 +301,11 @@ void Along_right_counter::check_right_sensors() {
         }
     }
 }
+
+
+/*
+LEFT COUNTER
+*/
 
 Along_left_counter::Along_left_counter(bool forward, int tape_markings, bool on_end)
     :tape_markings(tape_markings), forward(forward), done(false), on_end(on_end){
@@ -316,21 +323,30 @@ void Along_left_counter::execute() {
 
     check_left_sensors();
 
-    Serial3.println("Sensor values: back: " + String(sensor_pins_left[0]) + " middle: " + String(sensor_pins_left[1]) + " front: " + String(sensor_pins_left[2]));
-    Serial3.println("Sensors on: back: " + String(left_sensors_on[0]) + " middle: " + String(left_sensors_on[1]) + " front: " + String(left_sensors_on[2]));
-    Serial3.println("Sensors crossed: back: " + String(left_sensors_num_crossed[0]) + " middle: " + String(left_sensors_num_crossed[1]) + " front: " + String(left_sensors_num_crossed[2]));
+    Serial3.println("LEFT SENSORS: " + String(analogRead(sensor_pins_left[0])) + " " + String(analogRead(sensor_pins_left[1])) + " " + String(analogRead(sensor_pins_left[2])));
+    // Serial3.println("Sensors on: back: " + String(left_sensors_on[0]) + " middle: " + String(left_sensors_on[1]) + " front: " + String(left_sensors_on[2]));
+    // Serial3.println("Sensors crossed: back: " + String(left_sensors_num_crossed[0]) + " middle: " + String(left_sensors_num_crossed[1]) + " front: " + String(left_sensors_num_crossed[2]));
     
     if (forward) {
 
-        // 1. If foremost right sensor is on desired tape marking, slow motors
+        // 1. If foremost right sensor is on desired tape marking, run motors in reverse to stop
         if (left_sensors_num_crossed[2] >= (tape_markings-1) && left_sensors_on[2] == 1) { 
             for (int i = 0; i < 4; i++) {
-                motorSpeeds[i] = 0; //slowMotorSpeedsForwardLeftAC[i];
+                motorSpeeds[i] = stdMotorSpeedsBackwardLeftAC[i]; //0;
             }
             Serial3.println("Frontmost sensor on tape");
         }
 
-        // 2. If backmost sensor is on desired tape marking, go slowly in reverse
+        // 2. If middle sensor is on desired tape marking, stop motors
+        else if (left_sensors_num_crossed[1] >= (tape_markings-1) && left_sensors_on[1] == 1) {
+            for (int i = 0; i < 4; i++) {
+                motorSpeeds[i] = 0;
+            }
+            Serial3.println("Middle sensor on tape");
+            // done = true; // TODO 
+        } 
+
+        // 3. If backmost sensor is on desired tape marking, go slowly in reverse
         else if (left_sensors_num_crossed[0] >= (tape_markings-1) && left_sensors_on[0] == 1) { 
             for (int i = 0; i < 4; i++) {
                 motorSpeeds[i] = slowMotorSpeedsBackwardLeftAC[i];
@@ -338,13 +354,12 @@ void Along_left_counter::execute() {
             Serial3.println("Backmost sensor on tape");
         }
 
-        // 3. If middle sensor is on desired tape marking, stop motors
-        else if (left_sensors_num_crossed[1] >= (tape_markings-1) && left_sensors_on[1] == 1) {
+        // 4. If backmost sensor has crossed desired tape marking, go slowly in reverse
+        else if (left_sensors_num_crossed[0] >= tape_markings) {
             for (int i = 0; i < 4; i++) {
-                motorSpeeds[i] = 0;
+                motorSpeeds[i] = slowMotorSpeedsBackwardLeftAC[i];
             }
-            Serial3.println("Middle sensor on tape");
-            // done = true; // TODO 
+            Serial3.println("Backmost sensor crossed tape. Reverse");
         }
 
         // 4. If no sensor has crossed the last tape marking, set motor speeds to standard AC_LEFT speeds

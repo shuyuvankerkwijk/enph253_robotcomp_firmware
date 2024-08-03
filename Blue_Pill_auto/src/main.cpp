@@ -59,20 +59,22 @@ void setup() {
     }
 }
 
-Along_left_counter to_do = Along_left_counter(true, 1, false);
+Along_left_counter to_do = Along_left_counter(true, 2, false);
 
 void loop() {
-    Serial3.println("Looping");
     // Set motorSpeeds to a value between 0 and 1000, converted to 12-bit resolution for PWM signal
     // for (int i = 0; i < 4; i++) {
-    //     motorSpeeds[i] = 500; // Set to 500 for a 50% duty cycle (out of 1000) // can try changing back to 2000
+    //     motorSpeeds[i] = stdMotorSpeedsRTL[i]; // Set to 500 for a 50% duty cycle (out of 1000) // can try changing back to 2000
     // }
+    // updateMotorSpeed();
+
     if(!to_do.done){
         to_do.execute();
     }
     updateMotorSpeed();
+
     // Add a delay to observe the change (optional)
-    delay(10); // 10ms delay
+    // delay(10); // 10ms delay
 
     // if (Serial1.available()) {
     //     String message = Serial1.readStringUntil('\n');

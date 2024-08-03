@@ -32,7 +32,7 @@ void updateMotorSpeed() {
         switch(i) {
             case 0:  // Motor 0
                 pwm_start(motor_pwm_pins[0], 100, duty_cycle, TimerCompareFormat_t::RESOLUTION_12B_COMPARE_FORMAT);
-                digitalWrite(motor_d_select_pins[0], motorSpeeds[i] > 0 ? HIGH : LOW);
+                digitalWrite(motor_d_select_pins[0], motorSpeeds[i] > 0 ? LOW : HIGH);
                 break;
             case 1:  // Motor 1
                 pwm_start(motor_pwm_pins[1], 100, duty_cycle, TimerCompareFormat_t::RESOLUTION_12B_COMPARE_FORMAT);
@@ -40,7 +40,7 @@ void updateMotorSpeed() {
                 break;
             case 2:  // Motor 2
                 pwm_start(motor_pwm_pins[2], 100, duty_cycle, TimerCompareFormat_t::RESOLUTION_12B_COMPARE_FORMAT);
-                digitalWrite(motor_d_select_pins[2], motorSpeeds[i] > 0 ? LOW : HIGH);
+                digitalWrite(motor_d_select_pins[2], motorSpeeds[i] > 0 ? HIGH : LOW);
                 break;
             case 3:  // Motor 3
                 pwm_start(motor_pwm_pins[3], 100, duty_cycle, TimerCompareFormat_t::RESOLUTION_12B_COMPARE_FORMAT);
