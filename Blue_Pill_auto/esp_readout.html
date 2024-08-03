@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en" style="height: 100%;">
+<head>
+    <meta charset="UTF-8">
+    <title>ESP32 Dual WebSocket Monitor and Controller</title>
+    <style>
+        html, body {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+        }
+        #container {
+            display: flex;
+            flex: 1;
+            justify-content: space-around;
+            width: 100%;
+            padding: 10px;
+        }
+        .robot-section {
+            display: flex;
+            flex-direction: column;
+            flex: 1;
+            margin: 10px;
+        }
+        .controls {
+            display: flex;
+            margin-bottom: 10px;
+        }
+        .messages {
+            flex: 1;
+            border: 1px solid #ccc;
+            padding: 10px;
+            overflow-y: scroll;
+            max-height: 75vh; /* Relative height for message area */
+        }
+        .message-input {
+            display: flex;
+            margin-top: 10px;
+        }
+        input[type="text"] {
+            flex-grow: 1;
+            margin-right: 5px;
+        }
+        button {
+            width: 100px;
+        }
+    </style>
+</head>
+<body>
+    <h2 style="text-align: center;">ESP32 Communication Monitor</h2>
+    <div id="container">
+        <div class="robot-section">
+            <div class="controls">
+                <select id="ipAddress1">
+                    <option value="172.20.10.2">ESP 1 on iPhone B</option>
+                    <option value="192.168.0.101">Robot 1 - Lab</option>
+                    <option value="192.168.0.102">Robot 1 - Field</option>
+                    <option value="192.168.1.69">ESP 1 on Home Wifi</option>
+                </select>
+                <button onclick="connectWebSocket(1)">Connect</button>
+                <button onclick="clearLogs(1)">Clear Logs</button>
+                <button onclick="exportLogs(1)">Export Logs</button>
+            </div>
+            <div id="messages1" class="messages"></div>
+            <div class="message-input">
+                <input type="text" id="message1" placeholder="Send message to STM32 #1" onkeydown="handleKeyPress(event, 1)">
+                <button onclick="sendMessage(1)">Send</button>
+            </div>
+        </div>
+        <div class="robot-section">
+            <div class="controls">
+                <select id="ipAddress2">
+                    <option value="insert IP">ESP 2 on iPhone B</option>
+                    <option value="192.168.0.201">Robot 2 - Lab</option>
+                    <option value="192.168.0.202">Robot 2 - Field</option>
+                </select>
+                <button onclick="connectWebSocket(2)">Connect</button>
+                <button onclick="clearLogs(2)">Clear Logs</button>
+                <button onclick="exportLogs(2)">Export Logs</button>
+            </div>
+            <div id="messages2" class="messages"></div>
+            <div class="message-input">
+                <input type="text" id="message2" placeholder="Send message to STM32 #2" onkeydown="handleKeyPress(event, 2)">
+                <button onclick="sendMessage(2)">Send</button>
+            </div>
+        </div>
+    </div>
+    <script>
+        var ws1, ws2;
+
+        function connectWebSocket(channel) {
+            var ipSelect = document.getElementById('ipAddress' + channel);
+            var ip = ipSelect.value.trim();
+            var ws = channel === 1 ? ws1 : ws2;
+            var messagesDiv = document.getElementById('messages' + channel);
+
+            if (ws) {
+                ws.close(); // Close the existing WebSocket.
+            }
+            if (ip) {
+                ws = new WebSocket('ws://' + ip + '/ws');
+                ws.onmessage = function(event) {
+                    var message = document.createElement('div');
+                    message.textContent = event.data;
+                    messagesDiv.appendChild(message);
+                    messagesDiv.scrollTop = messagesDiv.scrollHeight;
+                };
+                ws.onerror = function(event) {
+                    console.error("WebSocket error observed:", event);
+                };
+                ws.onclose = function(event) {
+                    console.log("WebSocket is closed now for channel " + channel);
+                };
+                ws.onopen = function(event) {
+                    console.log("WebSocket is connected for channel " + channel);
+                };
+                if (channel === 1) {
+                    ws1 = ws;
+                } else {
+                    ws2 = ws;
+                }
+            } else {
+                alert('Please select a valid IP address for Robot ' + channel);
+            }
+        }
+
+        function clearLogs(channel) {
+            var messagesDiv = document.getElementById('messages' + channel);
+            messagesDiv.innerHTML = '';
+        }
+
+        function exportLogs(channel) {
+            var messagesDiv = document.getElementById('messages' + channel);
+            var blob = new Blob([messagesDiv.innerText], { type: 'text/plain;charset=utf-8' });
+            var url = window.URL.createObjectURL(blob);
+            var a = document.createElement('a');
+            a.href = url;
+            a.download = 'uart_logs_robot' + channel + '.txt';
+            document.body.appendChild(a);
+            a.click();
+            setTimeout(function() {
+                document.body.removeChild(a);
+                window.URL.revokeObjectURL(url);  
+            }, 0);
+        }
+
+        function sendMessage(channel) {
+            var messageBox = document.getElementById('message' + channel);
+            var ws = channel === 1 ? ws1 : ws2;
+            if (messageBox.value.trim() !== '') {
+                ws.send(messageBox.value);
+                messageBox.value = '';  // Clear the input box after sending
+            }
+        }
+
+        function handleKeyPress(event, channel) {
+            if (event.key === 'Enter') {
+                sendMessage(channel);
+            }
+        }
+    </script>
+</body>
+</html>
