@@ -133,14 +133,35 @@ Path::~Path() {
 
 void Path::execute() {
     bool is_done = true;
-    for (int i = 0; i < 6; ++i) {
-        if (moves_series[i] != nullptr && !moves_series[i]->done) {
-            is_done = false;
-            moves_series[i]->execute();
-            break; // Execute only the first move that is not done
+    for (int i = 0; i < 3; i++) {
+        // if (i == 1) {
+        //     digitalWrite(PC13,LOW);
+        // }
+        if (moves_series[i]->done && i == 0) {
+            digitalWrite(PC13, LOW);
         }
+        if (moves_series[i] != nullptr) {
+            if (!moves_series[i]->done) {
+                is_done = false;
+                moves_series[i]->execute();
+                break; // Execute only the first move that is not done
+            }
+            // else {
+            //     // digitalWrite(PC13, LOW);
+            // }
+        }
+        // else {
+        //     digitalWrite(PC13, LOW);
+        // }
     }
 
     done = is_done;
+    if(done){
+        Serial3.println("DONE; ISAT: "+ end_move);
+        begin_move = end_move;
+        for (int i = 0; i < 4; i++) {
+            motorSpeeds[i] = 0;
+        }
+    }
     
 }

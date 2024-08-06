@@ -12,7 +12,7 @@ public:
     void execute();
     bool done;
 
-    Moves* moves_series[6] = {nullptr}; // Initialize to nullptr
+    Moves* moves_series[6] = {nullptr,nullptr,nullptr,nullptr,nullptr,nullptr}; // Initialize to nullptr
 };
 
 #endif // MAP_ENCODING_H

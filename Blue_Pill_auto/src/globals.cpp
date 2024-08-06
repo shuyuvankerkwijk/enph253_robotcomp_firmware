@@ -39,7 +39,7 @@ int sensor_pins_right[3] = {PA5, PA4, PA3}; // right back, middle, front
 
 int stdMotorSpeedsRTL[4] = {int((-195-10)*2.5), int((187)*2.5), int((143+150)*2.5), int((-177)*2.5)}; 
 int stdMotorSpeedsLTR[4] = {(200)*2, (-187)*2, (-143 - 20)*2, (180)*2};  // 0, 1, 2, 3
-int stdMotorSpeedsForward[4] = {200, 193, 148, 180};
+int stdMotorSpeedsForward[4] = {200*2, 193*2, 148*2, 180*2};
 int stdMotorSpeedsBackward[4] = {-195, -187, -143, -177};
 
 int stdMotorSpeedsForwardLeftAC[4] = {int(200*1.5), int((193+10)*1.5), int(148*1.5), int((180+10)*1.5)}; // set right wheels at 2% faster
@@ -48,7 +48,7 @@ int stdMotorSpeedsBackwardLeftAC[4] = {-195*2, (-187-20)*2, -143*2, (-177-20)*2}
 int stdMotorSpeedsBackwardRightAC[4] = {(-195-20)*2, -187*2, (-143-20)*2, -177*2}; // set left wheels at 2% faster
 
 int slowMotorSpeedsRTL[4] = {int(-195/1.3), int(187/1.3), int(143/1.3), int(-177/1.3)}; // TODO: change to correct values
-int slowMotorSpeedsLTR[4] = {200/2, -187/2, -143/2, 180/2}; // TODO: change to correct values
+int slowMotorSpeedsLTR[4] = {200*3, -187*3, -143*3, 180*3}; // TODO: change to correct values
 int slowMotorSpeedsForward[4] = {200/2, 193/2, 148/2, 180/2}; // TODO: change to correct values
 int slowMotorSpeedsBackward[4] = {int(-195/1), int(-187/1), int(-143/1), int(-177/1)}; // TODO: change to correct values
 
@@ -59,8 +59,8 @@ int slowMotorSpeedsBackwardRightAC[4] = {(-195-20), -187, (-143-20), -177}; // s
 
 
 
-bool run = false;
+bool run = true;
 
 String begin_move = "Start";
-String end_move = "Start";
+String end_move = "Cheese";
 

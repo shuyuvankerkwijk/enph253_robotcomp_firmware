@@ -6,7 +6,7 @@
 class Moves {
 public:
     Moves() : done(false) {}
-    virtual void execute() = 0;
+    virtual void execute();
     bool done;
 };
 
@@ -14,8 +14,6 @@ class Left_to_right : public Moves {
 public:
     Left_to_right(bool start);
     void execute() override;
-
-    bool done;
 
     int right_sensors_crossed[3]; // 0 is before, 1 is on, and 2 is crossed
     bool right_crossed;
@@ -32,8 +30,6 @@ public:
     Right_to_left(bool start);
     void execute() override;
 
-    bool done;
-
     int right_sensors_crossed[3]; // 0 is before, 1 is on, and 2 is crossed
     bool right_crossed;
     int left_sensors_crossed[3];
@@ -48,15 +44,14 @@ class Move : public Moves {
 public:
     Move(int inches, bool along_right, bool along_left, bool forward);
 
-    bool started = false;
-    bool done;
+    bool started;
 
     bool along_right_counter;
     bool along_left_counter;
     bool forward;
 
     int inches;
-    int start_time;
+    unsigned long start_time;
 
     void execute() override;
 };
@@ -64,8 +59,6 @@ public:
 class Along_right_counter : public Moves {
 public:
     Along_right_counter(bool forward, int tape_markings, bool on_end);
-
-    bool done;
 
     bool forward;
     bool on_end;
@@ -82,8 +75,6 @@ public:
 class Along_left_counter : public Moves {
 public:
     Along_left_counter(bool forward, int tape_markings, bool on_end);
-
-    bool done;
 
     bool forward;
     bool on_end;
