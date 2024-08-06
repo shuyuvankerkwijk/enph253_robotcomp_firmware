@@ -5,16 +5,12 @@
 
 void setup_switch_interrupts();
 
-void handle_switch_F_L_Rising();
-void handle_switch_F_L_Falling();
+void handle_switch_F_L();
 
-void handle_switch_F_R_Rising();
-void handle_switch_F_R_Falling();
+void handle_switch_F_R();
 
-void handle_switch_B_L_Rising();
-void handle_switch_B_L_Falling();
+void handle_switch_B_L();
 
-void handle_switch_B_R_Rising();
-void handle_switch_B_R_Falling();
+void handle_switch_B_R();
 
 #endif

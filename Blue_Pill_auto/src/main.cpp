@@ -1,41 +1,4 @@
 
-//         // middle sensors on tape
-//         if (pa1result > Reflectance_threshold){ //|| pa4result > Reflectance_threshold
-//             for (int i=0; i<4; i++) {
-//                 motorSpeeds[i] = 0;
-//             }
-//             Serial1.println("Middle sensors on tape");
-//             run = false;
-//             Serial1.println("run = false");
-//         // front sensors on tape
-//         } else if (pa0result > Reflectance_threshold){  //|| pa3result > Reflectance_threshold
-//             for (int i=0; i<4; i++) {
-//                 motorSpeeds[i] = 0;
-//             }
-//             Serial1.println("run = false");
-//             Serial1.println("Front sensors on tape");
-//         // back sensors on tape (reverse)
-//         } else if (pa2result > Reflectance_threshold){ //|| pa5result > Reflectance_threshold
-//             for (int i=0; i<4; i++) {
-//                 motorSpeeds[i] = slowMotorSpeedsBackward[i];
-//             }
-//             Serial1.println("Back sensors on tape");
-//         } else{
-//             for (int i=0; i<4; i++) {
-//                 motorSpeeds[i] = stdMotorSpeedsForwardRightAC[i];
-//             }
-//              Serial1.println("No sensors on tape");
-//         }
-//         updateMotorSpeed();
-//         // delay(1000);
-//     }else{
-//         for(int i=0;i<4;i++){
-//         motorSpeeds[i]=0;
-//         }
-//         updateMotorSpeed();
-//     }
-// }
-
 #include <Arduino.h>
 #include "parse.h"
 #include "motor_control.h"
@@ -57,9 +20,6 @@ void setup() {
         pinMode(sensor_pins_left[i], INPUT);
         pinMode(sensor_pins_right[i], INPUT);
     }
-    pinMode(PC13,OUTPUT);
-    digitalWrite(PC13,HIGH);
-    delay(1000);
 }
 
 
@@ -87,6 +47,5 @@ void loop() {
         }
     }
     updateMotorSpeed();
-    Serial3.println("looped");
-    delay(50);
+    delay(3);
 }

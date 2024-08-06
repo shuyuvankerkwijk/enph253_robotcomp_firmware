@@ -33,7 +33,7 @@ int motorSpeeds[4] = {0, 0, 0, 0};
 PinName motor_pwm_pins[4] = {PB_9, PB_8, PB_6, PB_7}; // motor 1 (goes backward w low select), motor 0 (goes forward), motor 2 (goes forward), motor 3 (goes forward), motor 4 (goes forward)
 int motor_pwm_pins_ints[4] = {PB8, PB9, PB6, PB7}; 
 int motor_d_select_pins[4] = {PB5, PB4, PA15, PB3};
-int switch_pins[4] = {PB12, PB13, PB14, PB15}; // FRONT RIGHT, FRONT LEFT, BACK RIGHT, BACK LEFT (CHANGE THEM!)
+int switch_pins[4] = {PB13, PB15, PB14, PB12}; // same as switch states
 int sensor_pins_left[3] = {PA2, PA1, PA0}; // left back, middle, front
 int sensor_pins_right[3] = {PA5, PA4, PA3}; // right back, middle, front
 
@@ -62,5 +62,5 @@ int slowMotorSpeedsBackwardRightAC[4] = {(-195-20), -187, (-143-20), -177}; // s
 bool run = true;
 
 String begin_move = "Start";
-String end_move = "Cheese";
+String end_move = "Start";
 
