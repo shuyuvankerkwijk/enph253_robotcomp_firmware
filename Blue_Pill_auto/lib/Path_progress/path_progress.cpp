@@ -324,6 +324,8 @@ void Along_left_counter::execute() {
     check_left_sensors();
 
     Serial3.println("LEFT SENSORS: " + String(analogRead(sensor_pins_left[0])) + " " + String(analogRead(sensor_pins_left[1])) + " " + String(analogRead(sensor_pins_left[2])));
+    // Serial3.println("RIGHT SENSORS: " + String(analogRead(sensor_pins_right[0])) + " " + String(analogRead(sensor_pins_right[1])) + " " + String(analogRead(sensor_pins_right[2])));
+
     // Serial3.println("Sensors on: back: " + String(left_sensors_on[0]) + " middle: " + String(left_sensors_on[1]) + " front: " + String(left_sensors_on[2]));
     // Serial3.println("Sensors crossed: back: " + String(left_sensors_num_crossed[0]) + " middle: " + String(left_sensors_num_crossed[1]) + " front: " + String(left_sensors_num_crossed[2]));
     
@@ -332,7 +334,7 @@ void Along_left_counter::execute() {
         // 1. If foremost right sensor is on desired tape marking, run motors in reverse to stop
         if (left_sensors_num_crossed[2] >= (tape_markings-1) && left_sensors_on[2] == 1) { 
             for (int i = 0; i < 4; i++) {
-                motorSpeeds[i] = stdMotorSpeedsBackwardLeftAC[i]; //0;
+                motorSpeeds[i] =stdMotorSpeedsBackwardLeftAC[i]; //stdMotorSpeedsBackward[i];
             }
             Serial3.println("Frontmost sensor on tape");
         }
@@ -346,33 +348,40 @@ void Along_left_counter::execute() {
             // done = true; // TODO 
         } 
 
-        // 3. If backmost sensor is on desired tape marking, go slowly in reverse
-        else if (left_sensors_num_crossed[0] >= (tape_markings-1) && left_sensors_on[0] == 1) { 
+        // 3. If middle sensor has over exceeded desired tape marking, go slowly in reverse
+        else if (left_sensors_num_crossed[1] == tape_markings) {
             for (int i = 0; i < 4; i++) {
-                motorSpeeds[i] = slowMotorSpeedsBackwardLeftAC[i];
+                motorSpeeds[i] =  slowMotorSpeedsBackwardLeftAC[i]; // slowMotorSpeedsBackward[i];
             }
-            Serial3.println("Backmost sensor on tape");
+            Serial3.println("Middle sensor crossed tape. Reverse");
         }
 
-        // 4. If backmost sensor has crossed desired tape marking, go slowly in reverse
-        else if (left_sensors_num_crossed[0] >= tape_markings) {
-            for (int i = 0; i < 4; i++) {
-                motorSpeeds[i] = slowMotorSpeedsBackwardLeftAC[i];
-            }
-            Serial3.println("Backmost sensor crossed tape. Reverse");
-        }
 
-        // 4. If no sensor has crossed the last tape marking, set motor speeds to standard AC_LEFT speeds
+        // // 4. If backmost sensor is on desired tape marking, go slowly in reverse -- SHOULD BE UNNECESSARY
+        // else if (left_sensors_num_crossed[0] >= (tape_markings-1) && left_sensors_on[0] == 1) { 
+        //     for (int i = 0; i < 4; i++) {
+        //         motorSpeeds[i] = slowMotorSpeedsBackwardLeftAC[i];
+        //     }
+        //     Serial3.println("Backmost sensor on tape");
+        // }
+
+        // // 5. If backmost sensor has crossed desired tape marking, go slowly in reverse -- SHOULD BE UNNECESSARY
+        // else if (left_sensors_num_crossed[0] >= tape_markings) {
+        //     for (int i = 0; i < 4; i++) {
+        //         motorSpeeds[i] = slowMotorSpeedsBackwardLeftAC[i];
+        //     }
+        //     Serial3.println("Backmost sensor crossed tape. Reverse");
+        // }
+
+        // 6. If no sensor has crossed the last tape marking, set motor speeds to standard AC_LEFT speeds
         else if (left_sensors_num_crossed[0] <= (tape_markings-1) &&
             left_sensors_num_crossed[1] <= (tape_markings-1) &&
             left_sensors_num_crossed[2] <= (tape_markings-1)) {
             for (int i = 0; i < 4; i++) {
-                motorSpeeds[i] = stdMotorSpeedsForwardLeftAC[i];
+                motorSpeeds[i] = stdMotorSpeedsForward[i]; //stdMotorSpeedsForwardLeftAC[i];
             }
             Serial3.println("Straight ahead matey!");
         }
-
-        
 
         // if(switch_states[1]&&switch_states[3]){
         //     // change nothing from previous logic
