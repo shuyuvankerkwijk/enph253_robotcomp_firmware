@@ -11,6 +11,9 @@ Path::Path(String start, String end)
             moves_series[1] = new Left_to_right(true);
             moves_series[2] = new Along_right_counter(false, 1, true);
         } else if (end.equalsIgnoreCase("Tomato")) {
+            moves_series[0] = new Move(3, false, false, true); 
+            moves_series[1] = new Right_to_left(true);
+            moves_series[2] = new Along_left_counter(false, 1, true);
             // Define moves for Start to Tomato
         } else if (end.equalsIgnoreCase("Cutting")) {
             // Define moves for Start to Cutting
@@ -50,6 +53,9 @@ Path::Path(String start, String end)
             // Define moves for Tomato to Plates
         } else if (end.equalsIgnoreCase("Lettuce")) {
             // Define moves for Tomato to Lettuce
+            //moves_series[0] = new Along_left_counter(true, 2, false);
+            moves_series[1] = new Left_to_right(false); 
+            //moves_series[2] = new Along_right_counter(true, 1, true);
         }
     } else if (start.equalsIgnoreCase("Cutting")) {
         if (end.equalsIgnoreCase("Cheese")) {

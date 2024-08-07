@@ -15,9 +15,9 @@ public:
     Left_to_right(bool start);
     void execute() override;
 
-    int right_sensors_crossed[3]; // 0 is before, 1 is on, and 2 is crossed
+    int right_sensors_crossed; // 0 is before, 1 is on, and 2 is crossed
     bool right_crossed;
-    int left_sensors_crossed[3];
+    int left_sensors_crossed;
     bool left_crossed;
 
     void check_right_sensors();
@@ -30,9 +30,10 @@ public:
     Right_to_left(bool start);
     void execute() override;
 
-    int right_sensors_crossed[3]; // 0 is before, 1 is on, and 2 is crossed
+    //now just reading middle sensor.
+    int right_sensors_crossed; // 0 is before, 1 is on, and 2 is crossed
     bool right_crossed;
-    int left_sensors_crossed[3];
+    int left_sensors_crossed;
     bool left_crossed;
 
     void check_right_sensors();
@@ -64,6 +65,7 @@ public:
     bool on_end;
 
     int tape_markings;
+    int done_count;
 
     int right_sensors_on[3]; // 0 is off tape, 1 is on tape
     int right_sensors_num_crossed[3]; // The number of tape markings crossed by the sensor
@@ -80,6 +82,7 @@ public:
     bool on_end;
 
     int tape_markings;
+    int done_count;
 
     int left_sensors_on[3]; // 0 is off tape, 1 is on tape
     int left_sensors_num_crossed[3]; // The number of tape markings crossed by the sensor
