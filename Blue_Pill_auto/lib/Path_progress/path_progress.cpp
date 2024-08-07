@@ -17,7 +17,7 @@ void Left_to_right::execute() {
         check_left_sensors();
     }
     correct_motor_speeds();
-    if(left_crossed && right_crossed && (switch_states[1] || switch_states[3])){ // if both sides crossed and the two switches on the right side clicked, succesfully crossed
+    if(left_crossed && right_crossed && (switch_states[1] || switch_states[3])){ // if both sides crossed and  one of the switches on the right side clicked, succesfully crossed
         done = true;
         for(int i = 0; i<4;i++){
             motorSpeeds[i] = 0;
@@ -59,39 +59,32 @@ void Left_to_right::check_right_sensors() {
 
 void Left_to_right::correct_motor_speeds() {
     // 1. If none of right side sensors have crossed, then set motor speeds to standard LTR speeds
-    if (!(right_sensors_crossed[0] || right_sensors_crossed[1] || right_sensors_crossed[2])) {
+    if (!right_crossed&&!left_crossed) {
         for (int i = 0; i < 4; i++) {
             motorSpeeds[i] = stdMotorSpeedsLTR[i];
         }
     } 
-    // // 2. If one or more right side sensors are on tape or have crossed, correct for angle of crossing
-    // else if (!(right_crossed || left_crossed)) {
-    //     for (int i = 0; i < 3; i++) {
-    //         motorSpeeds[i] = stdMotorSpeedsLTR[i];
-    //     }
-    // }
-
-    // // 3. If all right side sensors have crossed, but not left side sensors, ??
+    // // 2. If all right side sensors have crossed but the left have not yet, then set the motor speeds to standard LTR speeds
     else if (right_crossed && !left_crossed) {
-        // TODO Implement logic for when right side is crossed but not left side -- nothing for now
         for (int i = 0; i < 4; i++) {
             motorSpeeds[i] = stdMotorSpeedsLTR[i];
         }
     }
 
-    else if((right_crossed && left_crossed)&&(switch_states[1]||switch_states[1])){
+    // 3. If all right side sensors have crossed and left side sensors have crossed, slow motors down
+    else if(right_crossed && left_crossed) {
+        for (int i = 0; i < 4; i++) {
+            motorSpeeds[i] = slowMotorSpeedsLTR[i];
+        }
+    }
+
+    // 4. if all the sensors have crossed and one of the counter detection switches was pressed set to 0 and finish
+    else if((right_crossed && left_crossed)&&(switch_states[1]||switch_states[3])){
         for (int i = 0; i < 4; i++) {
             motorSpeeds[i] = slowMotorSpeedsLTR[i];
         }
         done = true;
         Serial3.println("LTR: DONE");
-    }
-
-    // 4. If all right side sensors have crossed and left side sensors have crossed, slow motors down
-    else if(right_crossed && left_crossed) {
-        for (int i = 0; i < 4; i++) {
-            motorSpeeds[i] = slowMotorSpeedsLTR[i];
-        }
     }
 }
 
@@ -105,13 +98,11 @@ Right_to_left::Right_to_left(bool start){
 void Right_to_left::execute() {
     if (!left_crossed) {
         check_left_sensors();
-    } else if (left_crossed) {
+    } else if (left_crossed && !right_crossed) {
         check_right_sensors();
     }
-    Serial3.println("RIGHT CROSSED: " + String(right_crossed));
-    Serial3.println("LEFT CROSSED: " + String(left_crossed));
     correct_motor_speeds();
-    if(right_crossed){// && switch_states[1]&&switch_states[3]
+    if(left_crossed && right_crossed && (switch_states[0] || switch_states[2])){
         done = true;
         for (int i = 0; i < 4; i++) {
             motorSpeeds[i] = 0;
@@ -151,33 +142,33 @@ void Right_to_left::check_right_sensors() {
 }
 
 void Right_to_left::correct_motor_speeds() {
-        // 1. If none of right side sensors have crossed, then set motor speeds to standard LTR speeds
-    if (!(right_sensors_crossed[0] || right_sensors_crossed[1] || right_sensors_crossed[2])) {
-        for (int i = 0; i < 3; i++) {
-            motorSpeeds[i] = stdMotorSpeedsLTR[i];
+    // 1. If neither the left or the right sensors have crossed, then set motor speeds to standard RTL speeds
+    if (!left_crossed&&!right_crossed) {
+        for (int i = 0; i < 4; i++) {
+            motorSpeeds[i] = stdMotorSpeedsRTL[i];
         }
     } 
-
-    // 2. If one or more right side sensors are on tape or have crossed, correct for angle of crossing
-    // else if (!(right_crossed || left_crossed)) {
-    //     for (int i = 0; i < 3; i++) {
-    //         motorSpeeds[i] = stdMotorSpeedsLTR[i];
-    //     }
-    // }
-        
-    // // 3. If all right side sensors have crossed, but not left side sensors
-    // else if (right_crossed && !left_crossed) {
-    //     // TODO Implement logic for when right side is crossed but not left side -- nothing for now
-    //     for (int i = 0; i < 3; i++) {
-    //         motorSpeeds[i] = stdMotorSpeedsLTR[i];
-    //     }
-    // }
-
-    // // 4. If all right side sensors have crossed and left side sensors have crossed, slow motors down
-    else if(right_crossed && left_crossed) {
-        for (int i = 0; i < 3; i++) {
-            motorSpeeds[i] = slowMotorSpeedsLTR[i];
+    // // 2. If left sensors have crossed but the right have not yet, then set the motor speeds to standard RTL speeds
+    else if (left_crossed && !right_crossed) {
+        for (int i = 0; i < 4; i++) {
+            motorSpeeds[i] = stdMotorSpeedsRTL[i];
         }
+    }
+
+    // 3. If all right side sensors have crossed and left side sensors have crossed, slow motors down
+    else if(right_crossed && left_crossed) {
+        for (int i = 0; i < 4; i++) {
+            motorSpeeds[i] = slowMotorSpeedsRTL[i];
+        }
+    }
+
+    // 4. if all the sensors have crossed and one of the counter detection switches was pressed set to 0 and finish
+    else if((right_crossed && left_crossed)&&(switch_states[0]||switch_states[2])){
+        for (int i = 0; i < 4; i++) {
+            motorSpeeds[i] = slowMotorSpeedsRTL[i];
+        }
+        done = true;
+        Serial3.println("RTL: DONE");
     }
 }
 
