@@ -61,6 +61,6 @@ int slowMotorSpeedsBackwardRightAC[4] = {int((-195-5)), int(-187), int((-143-5))
 
 bool run = true;
 
-String begin_move = "Tomato";
-String end_move = "Lettuce";
+String begin_move = "Start";
+String end_move = "Start";
 

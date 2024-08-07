@@ -37,6 +37,9 @@ Path::Path(String start, String end)
             // Define moves for Cheese to Cooktop
         } else if (end.equalsIgnoreCase("Plates")) {
             // Move up 1s along right counter, move to left counter, move along counter passing 2 markings fast, slow to the next marking
+            moves_series[0] = new Move(3, true, false, true); 
+            moves_series[1] = new Right_to_left(false);
+            moves_series[2] = new Along_left_counter(true, 3, true);
         } else if (end.equalsIgnoreCase("Lettuce")) {
             // Define moves for Cheese to Lettuce
         }
@@ -53,9 +56,9 @@ Path::Path(String start, String end)
             // Define moves for Tomato to Plates
         } else if (end.equalsIgnoreCase("Lettuce")) {
             // Define moves for Tomato to Lettuce
-            //moves_series[0] = new Along_left_counter(true, 2, false);
+            moves_series[0] = new Along_left_counter(true, 2, false);
             moves_series[1] = new Left_to_right(false); 
-            //moves_series[2] = new Along_right_counter(true, 1, true);
+            moves_series[2] = new Along_right_counter(true, 1, true);
         }
     } else if (start.equalsIgnoreCase("Cutting")) {
         if (end.equalsIgnoreCase("Cheese")) {
@@ -108,6 +111,9 @@ Path::Path(String start, String end)
             // Define moves for Plates to Cutting
         } else if (end.equalsIgnoreCase("Serving_area")) {
             // Move down 1 marking fast, from left counter to right counter, search for beacon()
+            moves_series[0] = new Move(3, false, true, false);
+            moves_series[1] = new Left_to_right(false); 
+            moves_series[2] = new Move(10, true, false, false);
         } else if (end.equalsIgnoreCase("Cooktop")) {
             // Define moves for Plates to Cooktop
         } else if (end.equalsIgnoreCase("Lettuce")) {
@@ -126,6 +132,9 @@ Path::Path(String start, String end)
             // Define moves for Lettuce to Cooktop
         } else if (end.equalsIgnoreCase("Plates")) {
             // Define moves for Lettuce to Plates
+            moves_series[0] = new Move(3, true, false, false);
+            moves_series[1] = new Right_to_left(false); 
+            moves_series[2] = new Along_left_counter(true, 1, true);
         }
     }
 }

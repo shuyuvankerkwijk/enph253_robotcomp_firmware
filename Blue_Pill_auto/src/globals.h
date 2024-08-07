@@ -4,11 +4,13 @@
 #include <stdint.h>
 #include <Arduino.h>
 #include "path_progress.h"
+#include "map_encoding.h"
 
 // Declare global variables
 
 // extern HardwareSerial Serial1;
 extern HardwareSerial Serial_to_ESP;
+
 
 extern int Reflectance_threshold;
 extern bool switch_states[4];

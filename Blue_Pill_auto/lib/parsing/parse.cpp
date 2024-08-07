@@ -31,6 +31,7 @@ String parse(String message) { //TODO
         return "BP recieved: stop";
     }else if(message.substring(0,5).equalsIgnoreCase("GOTO:")){
         end_move = message.substring(5);
+        return "GOTO"+end_move;
     }
     else if(message.substring(0,4).equalsIgnoreCase("move")){
 

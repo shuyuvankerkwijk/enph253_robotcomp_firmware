@@ -423,24 +423,6 @@ void Along_left_counter::execute() {
                 done_count = 0;
             }
 
-            // 4. If backmost sensor is on desired tape marking, go slowly in reverse
-            // else if (left_sensors_num_crossed[0] >= (tape_markings-1) && left_sensors_on[0] == 1) { 
-            //     for (int i = 0; i < 4; i++) {
-            //         motorSpeeds[i] = slowMotorSpeedsBackwardLeftAC[i];
-            //     }
-            //     Serial3.println("Backmost sensor on tape");
-            //     done_count = 0;
-            // }
-
-            // 5. If backmost sensor has crossed desired tape marking, go slowly in reverse
-            // else if (left_sensors_num_crossed[0] >= tape_markings) {
-            //     for (int i = 0; i < 4; i++) {
-            //         motorSpeeds[i] = slowMotorSpeedsBackwardLeftAC[i];
-            //     }
-            //     Serial3.println("Backmost sensor crossed tape. Reverse");
-            //     done_count = 0;
-            // }
-
             // 6. If no sensor has crossed the last tape marking, set motor speeds to standard AC_LEFT speeds
             else if (left_sensors_num_crossed[0] <= (tape_markings-1) &&
                 left_sensors_num_crossed[1] <= (tape_markings-1) &&
@@ -576,17 +558,12 @@ Move::Move(int inches, bool along_right, bool along_left, bool forward)
 }
 
 void Move::execute(){
-    
-    Serial3.println("MOVE");
-
     if(!started){
         start_time = millis();
         started = true;
-        Serial3.println(start_time);
     }
     if((millis())>start_time+100*inches){
         this->done = true;
-        Serial3.println("MOVE: DONE");
         for (int i = 0; i <= 3; i++) {
             if(forward){
                 motorSpeeds[i] = stdMotorSpeedsBackward[i];
