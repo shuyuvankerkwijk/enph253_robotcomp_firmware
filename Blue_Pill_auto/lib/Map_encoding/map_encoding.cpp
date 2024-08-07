@@ -7,7 +7,7 @@ Path::Path(String start, String end)
     if (start.equalsIgnoreCase("Start")) {
         if (end.equalsIgnoreCase("Cheese")) {
             // Move up 1s, move to right counter, move slow down along right counter
-            moves_series[0] = new Move(5, false, false, true); 
+            moves_series[0] = new Move(3, false, false, true); 
             moves_series[1] = new Left_to_right(true);
             moves_series[2] = new Along_right_counter(false, 1, true);
         } else if (end.equalsIgnoreCase("Tomato")) {
@@ -134,25 +134,13 @@ Path::~Path() {
 void Path::execute() {
     bool is_done = true;
     for (int i = 0; i < 3; i++) {
-        // if (i == 1) {
-        //     digitalWrite(PC13,LOW);
-        // }
-        if (moves_series[i]->done && i == 0) {
-            digitalWrite(PC13, LOW);
-        }
         if (moves_series[i] != nullptr) {
             if (!moves_series[i]->done) {
                 is_done = false;
                 moves_series[i]->execute();
                 break; // Execute only the first move that is not done
             }
-            // else {
-            //     // digitalWrite(PC13, LOW);
-            // }
         }
-        // else {
-        //     digitalWrite(PC13, LOW);
-        // }
     }
 
     done = is_done;

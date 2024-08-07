@@ -38,7 +38,7 @@ int sensor_pins_left[3] = {PA2, PA1, PA0}; // left back, middle, front
 int sensor_pins_right[3] = {PA5, PA4, PA3}; // right back, middle, front
 
 int stdMotorSpeedsRTL[4] = {int((-195-10)*2.5), int((187)*2.5), int((143+150)*2.5), int((-177)*2.5)}; 
-int stdMotorSpeedsLTR[4] = {(200)*2, (-187)*2, (-143 - 20)*2, (180)*2};  // 0, 1, 2, 3
+int stdMotorSpeedsLTR[4] = {(200)*3, (-187)*3, (-143)*4, (180)*4};  // 0, 1, 2, 3
 int stdMotorSpeedsForward[4] = {200*2, 193*2, 148*2, 180*2};
 int stdMotorSpeedsBackward[4] = {-195, -187, -143, -177};
 
@@ -54,13 +54,13 @@ int slowMotorSpeedsBackward[4] = {int(-195/1), int(-187/1), int(-143/1), int(-17
 
 int slowMotorSpeedsForwardLeftAC[4] = {200, (193+20), 148, (180+20)}; // set right wheels at 1% faster
 int slowMotorSpeedsForwardRightAC[4] = {(200+20), 193, (148+20), 180}; // set left wheels at 1% faster
-int slowMotorSpeedsBackwardLeftAC[4] = {int(-195/1.2), int((-187-10)/1.2), int(-143/1.2), int((-177-10)/1.2)}; // set right wheels at 1% faster
-int slowMotorSpeedsBackwardRightAC[4] = {(-195-20), -187, (-143-20), -177}; // set left wheels at 1% faster
+int slowMotorSpeedsBackwardLeftAC[4] = {int(-195), int((-187-10)), int(-143), int((-177-10))}; // set right wheels at 1% faster
+int slowMotorSpeedsBackwardRightAC[4] = {int((-195-5)), int(-187), int((-143-5)), int(-177)}; // set left wheels at 1% faster
 
 
 
 bool run = true;
 
 String begin_move = "Start";
-String end_move = "Start";
+String end_move = "Cheese";
 

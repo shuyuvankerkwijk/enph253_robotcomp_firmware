@@ -20,6 +20,8 @@ void setup() {
         pinMode(sensor_pins_left[i], INPUT);
         pinMode(sensor_pins_right[i], INPUT);
     }
+
+    delay(1000);
 }
 
 
@@ -47,5 +49,6 @@ void loop() {
         }
     }
     updateMotorSpeed();
+    Serial3.println("looped!");
     delay(3);
 }
