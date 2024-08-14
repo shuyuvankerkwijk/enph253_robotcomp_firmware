@@ -2,57 +2,44 @@
 #include "driver/ledc.h"
 #include "crane.h"
 #include "pinout.h"
-#include "ws.h"
+// #include "ws.h"
 
 int CranePWMFreq = 1000;  // PWM frequency in Hz 
 int CranePWMResolution = 8;  // PWM resolution in bits
 
-int craneZChannelF = 0;                                                                      
-int craneRChannelF = 1;  
-int craneYChannelF = 2; 
+int craneRChannelExtendB = 0;  
+int craneRChannelRetractB = 1;  
 
-int craneZChannelB = 3;
-int craneRChannelB = 4;  
-int craneYChannelB = 5;  
-
-float distPerClickR = 126/44; // Distance the rack moves in mm per click
-float degPerClickZ = 360/(24*2*2);
-
-volatile int encoderPosZF = 0;
-volatile int directionZF = 0; // 0 is nothing, 1 is clockwise, -1 is counter-clockwise
-volatile int encoderPosRF = 0;
-volatile int directionRF = 0; // 0 is nothing, 1 is forward, -1 is backward
-volatile int posYF = -1; // -1 is up (retracted), 1 is down (extended), starts retracted
-
-volatile int encoderPosZB = 0;
+// BACK ARM VARIABLES
+volatile int encoderPosZB = 0; // global position of encoder, starts at 0
 volatile int directionZB = 0; // 0 is nothing, 1 is clockwise, -1 is counter-clockwise
-volatile int encoderPosRB = 0;
-volatile int directionRB = 0; // 0 is nothing, 1 is forward, -1 is backward
-volatile int posYB = 1;// -1 is up (retracted), 1 is down (extended), starts retracted
 
-//Back_ARM
+volatile int encoderPosRB = -5; // global position of encoder, starts at -5 because first extension is until it hits switch
+volatile int directionRB = 0; // 0 is nothing, 1 is forward, -1 is backward
+
+volatile int posYB = -1;// -1 is up (retracted), 1 is down (extended), starts retracted
+
+// BACK ARM
 void handleZEncoderB() {
     // Check the direction of rotation 
     if (directionZB == -1) {
         encoderPosZB--; // counter-clockwise
     } else if (directionZB == 1) {
         encoderPosZB++; // clockwise
-    } else {
-        // Check line B?
     }
 }
 void handleREncoderB() {
-    // Check the direction of rotation
-    // if (digitalRead(RMOTOR_BACK_ENCODER_PIN_B) == HIGH) {
-    //     encoderPosRB++;
-    // } else {
-    //     encoderPosRB--;
-    // }
-    if (directionRB == 1) { // TODO
-        encoderPosRB++;
+    if (directionRB == 1) { // globalEncoderPosRB can't ever go to zero unless the switch is clicked
+        encoderPosRB++; // extending (0 position is fully extended)
+        if (encoderPosRB == 0) {
+            encoderPosRB = -1;
+        }
     } else if (directionRB == -1) {
-        encoderPosRB--;
+        encoderPosRB--; // retracting (negative positions)
     }
+}
+void handleRSwitchB() {
+    encoderPosRB = 0;
 }
 void handleYExtendSwitchB() {
     posYB = 1;
@@ -67,14 +54,9 @@ void craneSetupZAxisB() {
     pinMode(ZMOTOR_BACK_CW_PIN, OUTPUT);
     pinMode(ZMOTOR_BACK_CCW_PIN, OUTPUT);
 
-    ledcSetup(craneZChannelB, CranePWMFreq, CranePWMResolution); 
-    ledcWrite(craneZChannelB, 0); 
-
     // ENCODER FOR Z MOTOR
     pinMode(ZMOTOR_BACK_ENCODER_PIN, INPUT);
     attachInterrupt(digitalPinToInterrupt(ZMOTOR_BACK_ENCODER_PIN), handleZEncoderB, CHANGE); // on both rising and falling edges
-    
-    // Add limit switch #TODO
 }
 
 void craneSetupRAxisB() {
@@ -82,23 +64,27 @@ void craneSetupRAxisB() {
     pinMode(RMOTOR_BACK_FORWARD_PIN, OUTPUT);
     pinMode(RMOTOR_BACK_BACKWARD_PIN, OUTPUT);
 
-    ledcSetup(craneRChannelB, CranePWMFreq, CranePWMResolution); // Configure the PWM functionalities
-    ledcWrite(craneRChannelB, 0);
+    ledcSetup(craneRChannelExtendB, CranePWMFreq, CranePWMResolution); // Configure the PWM functionalities
+    ledcAttachPin(RMOTOR_BACK_FORWARD_PIN, craneRChannelExtendB); // Attach the PWM channel to the specified pin
+    ledcWrite(craneRChannelExtendB, 0);
+    
+    ledcSetup(craneRChannelRetractB, CranePWMFreq, CranePWMResolution); // Configure the PWM functionalities
+    ledcAttachPin(RMOTOR_BACK_BACKWARD_PIN, craneRChannelRetractB); // Attach the PWM channel to the specified pin
+    ledcWrite(craneRChannelRetractB, 0);
 
     // ENCODER FOR R MOTOR
     pinMode(RMOTOR_BACK_ENCODER_PIN, INPUT);
     attachInterrupt(digitalPinToInterrupt(RMOTOR_BACK_ENCODER_PIN), handleREncoderB, CHANGE); // on both rising and falling edges
     
-    // Add limit switch #TODO
+    // LIMIT SWITCH FOR R MOTOR
+    pinMode(RMOTOR_BACK_EXTEND_LIMIT_SWITCH_PIN, INPUT_PULLUP);
+    attachInterrupt(digitalPinToInterrupt(RMOTOR_BACK_EXTEND_LIMIT_SWITCH_PIN), handleRSwitchB, FALLING); // on falling edges (switch pressed)
 }
 
 void craneSetupYAxisB() {
     // CRANE Y MOTOR
     pinMode(YMOTOR_BACK_UP_PIN, OUTPUT);
     pinMode(YMOTOR_BACK_DOWN_PIN, OUTPUT);
-    
-    ledcSetup(craneYChannelB, CranePWMFreq, CranePWMResolution); // Configure the PWM functionalities
-    ledcWrite(craneYChannelB, 0); // Set duty cycle to 0% (127/255)
 
     // LIMIT SWITCHES FOR Y MOTOR
     pinMode(YMOTOR_BACK_EXTEND_LIMIT_SWITCH_PIN, INPUT_PULLUP);
@@ -109,40 +95,29 @@ void craneSetupYAxisB() {
 
 // MOVEMENT BACK
 void craneSetDirectionZB(int dir) {
-    directionZB = dir;
     encoderPosZB = 0;
-    if (dir == 1) { // clockwise
-        ledcDetachPin(ZMOTOR_BACK_CCW_PIN); // Detach the PWM channel from the specified pin
-        ledcAttachPin(ZMOTOR_BACK_CW_PIN, craneZChannelB); // Attach the PWM channel to the specified pin
-    } else if (dir == -1) {
-        ledcDetachPin(ZMOTOR_BACK_CW_PIN); // Detach the PWM channel from the specified pin
-        ledcAttachPin(ZMOTOR_BACK_CCW_PIN, craneZChannelB); // Attach the PWM channel to the specified pin
-    } else {
-        ledcWrite(craneZChannelB, 0);
-        ledcWrite(craneZChannelB, 0);
-    }
+    directionZB = dir;
 }
 
 bool craneMoveZB(int final_pos) {
     // Rotate either clockwise or counterclockwise (given by sign of final_pos) to final_pos position (in clicks)
     if (directionZB == 1) { // clockwise
         if (encoderPosZB >= final_pos) { // reached position, stop crane
-            ledcWrite(craneZChannelB, 0);
-            Serial.println("Done Z CW");
+            digitalWrite(ZMOTOR_BACK_CW_PIN, LOW);
+            // wsSend("Done Z CW " + String(encoderPosZB) + " final pos " + String(final_pos));
             return true;
         } else { // have not reached position, start/keep rotating
-            ledcWrite(craneZChannelB, 255);
-            Serial.println("ZPos " + String(encoderPosZB));
+            digitalWrite(ZMOTOR_BACK_CW_PIN, HIGH);
             return false;
         }
+        
     } else if (directionZB == -1) { // counter-clockwise
-        if (encoderPosZB <= final_pos) { // reached position, stop crane // NEED TO FIX
-            ledcWrite(craneZChannelB, 0);
-            Serial.println("Done Z CCW"); 
+        if (encoderPosZB <= final_pos) { // reached position, stop crane
+            digitalWrite(ZMOTOR_BACK_CCW_PIN, LOW);
+            // wsSend("Done Z CCW " + String(encoderPosZB)); 
             return true;
         } else { // have not reached position, start/keep rotating
-            ledcWrite(craneZChannelB, 255);
-            Serial.println("ZPos " + String(encoderPosZB));
+            digitalWrite(ZMOTOR_BACK_CCW_PIN, HIGH);
             return false;
         }
     } else {
@@ -152,40 +127,32 @@ bool craneMoveZB(int final_pos) {
 
 void craneSetDirectionRB(int dir) {
     directionRB = dir;
-    encoderPosRB = 0;
-    if (dir == 1) {
-        ledcDetachPin(RMOTOR_BACK_BACKWARD_PIN); // Detach the PWM channel from the specified pin
-        ledcAttachPin(RMOTOR_BACK_FORWARD_PIN, craneRChannelB); // Attach the PWM channel to the specified pin
-    } else if (dir == -1) {
-        ledcDetachPin(RMOTOR_BACK_FORWARD_PIN); // Detach the PWM channel from the specified pin
-        ledcAttachPin(RMOTOR_BACK_BACKWARD_PIN, craneRChannelB); // Attach the PWM channel to the specified pin
-    } else {
-        ledcWrite(craneRChannelB, 0);
-        ledcWrite(craneRChannelB, 0);
-    }
 }
 
-bool craneMoveRB(int final_pos) {
-    if (directionRB == 1) { // forward
-        if (encoderPosRB >= final_pos) {
-            ledcWrite(craneRChannelB, 0);
-            Serial.println("Done R forward " + String(encoderPosRB)); 
+bool craneMoveRB(int finalPos) {
+    if (directionRB == 1) { // extending
+        if (encoderPosRB == 0) {
+            ledcWrite(craneRChannelExtendB, 0);
+            // wsSend("Done R forward " + String(encoderPosRB)); 
             return true;
+        // } else if (abs(encoderPosRB) < 25) {
+        //     ledcWrite(craneRChannelExtendB, 175);
+        //     return false;
         } else {
-            Serial.println("RPos " + String(encoderPosRB));
-            Serial.println("Final " + String(final_pos));
-            ledcWrite(craneRChannelB, 230);
+            ledcWrite(craneRChannelExtendB, 200);
             return false;
         }
+
     } else if (directionRB == -1) { // backward
-        if (encoderPosRB <= final_pos) { 
-            ledcWrite(craneRChannelB, 0);
-            Serial.println("Done R backward " + String(encoderPosRB)); // TEMPORARY
+        if (encoderPosRB <= finalPos) { 
+            ledcWrite(craneRChannelRetractB, 0);
+            // wsSend("Done R backward " + String(encoderPosRB));
             return true;
+        // } else if (abs(encoderPosRB - finalPos) < 10) {
+        //     ledcWrite(craneRChannelRetractB, 150);
+        //     return false;
         } else {
-            Serial.println("RPos " + String(encoderPosRB)); // TEMPORARY
-            Serial.println("Final " + String(final_pos));
-            ledcWrite(craneRChannelB, 200);
+            ledcWrite(craneRChannelRetractB, 200);
             return false;
         }
     } else {
@@ -194,42 +161,58 @@ bool craneMoveRB(int final_pos) {
 }
 
 void craneSetDirectionYB(int dir) {
-    if (dir == 1) { // extend
-        ledcDetachPin(YMOTOR_BACK_UP_PIN); // Detach the PWM channel from the specified pin
-        ledcAttachPin(YMOTOR_BACK_DOWN_PIN, craneYChannelB); // Attach the PWM channel to the specified pin
-    } else if (dir == -1) { // retract
-        ledcDetachPin(YMOTOR_BACK_DOWN_PIN); // Detach the PWM channel from the specified pin
-        ledcAttachPin(YMOTOR_BACK_UP_PIN, craneYChannelB); // Attach the PWM channel to the specified pin
-    } else {
-        ledcWrite(craneYChannelB, 0);
-    }
+    // pass
 }
 
-bool craneMoveYB(int final_pos) {
-    if (final_pos == -1) { // Retract
+bool craneMoveYB(int finalPos) {
+    if (finalPos == -1) { // Retract
         if (posYB == -1) {
-            ledcWrite(craneYChannelB, 0);
-            Serial.println("Done Y up"); // TEMPORARY
+            digitalWrite(YMOTOR_BACK_UP_PIN, LOW);
+            // wsSend("Done Y up " + String(posYB));
             return true;
         } else {
-            ledcWrite(craneYChannelB, 255);
-            Serial.println("YPos " + String(posYB)); // TEMPORARY
+            digitalWrite(YMOTOR_BACK_UP_PIN, HIGH);
             return false;
         }
     } else { // Extend
         if (posYB == 1) {
-            ledcWrite(craneYChannelB, 0);
-            Serial.println("Done Y down"); // TEMPORARY
+            digitalWrite(YMOTOR_BACK_DOWN_PIN, LOW);
+            // wsSend("Done Y down " + String(posYB)); 
             return true;
         } else {
-            ledcWrite(craneYChannelB, 255);
-            Serial.println("YPos " + String(posYB)); // TEMPORARY
+            digitalWrite(YMOTOR_BACK_DOWN_PIN, HIGH);
             return false;
         }
     }
 }
 
-//Front_ARM
+void craneSetupB() {
+    craneSetupZAxisB();
+    craneSetupRAxisB();
+    craneSetupYAxisB();
+}
+
+
+
+
+
+
+
+
+
+
+
+// FRONT ARM
+volatile int encoderPosZF = 0;
+volatile int directionZF = 0; // 0 is nothing, 1 is clockwise, -1 is counter-clockwise
+volatile int encoderPosRF = 0;
+volatile int directionRF = 0; // 0 is nothing, 1 is forward, -1 is backward
+volatile int posYF = -1; // -1 is up (retracted), 1 is down (extended), starts retracted
+
+int craneZChannelF = 0;                                                                      
+int craneRChannelF = 1;  
+int craneYChannelF = 2; 
+
 void handleZEncoderF() {
     // Check the direction of rotation 
     if (directionZF == -1) {
@@ -254,8 +237,6 @@ void handleYExtendSwitchF() {
 void handleYRetractSwitchF() {
     posYF = -1;
 }
-
-// FRONT ARM
 void craneSetupZAxisF() {
     // CRANE Z MOTOR
     pinMode(ZMOTOR_FRONT_CW_PIN, OUTPUT);
@@ -294,8 +275,6 @@ void craneSetupYAxisF() {
     attachInterrupt(digitalPinToInterrupt(YMOTOR_FRONT_EXTEND_LIMIT_SWITCH_PIN), handleYExtendSwitchF, FALLING); // on falling edges (switch pressed)
     attachInterrupt(digitalPinToInterrupt(YMOTOR_FRONT_RETRACT_LIMIT_SWITCH_PIN), handleYRetractSwitchF, FALLING); // on falling edges (switch pressed)
 }
-
-// MOVEMENT FRONT
 void craneSetDirectionZF(int dir) {
     directionZF = dir;
     if (dir == 1) {
@@ -311,7 +290,6 @@ void craneSetDirectionZF(int dir) {
         ledcWrite(craneZChannelF, 0);
     }
 }
-
 bool craneMoveZF(int final_pos) {
     // Rotate either clockwise or counterclockwise (given by sign of final_pos) to final_pos position (in clicks)
     if (final_pos > 0) { // clockwise
@@ -330,7 +308,6 @@ bool craneMoveZF(int final_pos) {
         }
     }
 }
-
 void craneSetDirectionRF(int dir) {
     directionRF = dir;
     if (dir == 1) {
@@ -346,7 +323,6 @@ void craneSetDirectionRF(int dir) {
         ledcWrite(craneRChannelF, 0);
     }
 }
-
 bool craneMoveRF(int final_pos) {
     if (final_pos > 0) { // forward
         if (encoderPosRF >= final_pos) {
@@ -364,7 +340,6 @@ bool craneMoveRF(int final_pos) {
         }
     }
 }
-
 void craneSetDirectionYF(int dir) {
     if (dir == 1) { // extend
         ledcDetachPin(YMOTOR_FRONT_UP_PIN); // Detach the PWM channel from the specified pin
@@ -378,7 +353,6 @@ void craneSetDirectionYF(int dir) {
         ledcWrite(craneYChannelF, 0);
     }
 }
-
 bool craneMoveYF(int final_pos) {
     if (final_pos == -1) { // Retract
         if (posYF == -1) {
@@ -396,19 +370,8 @@ bool craneMoveYF(int final_pos) {
         }
     }
 }
-
-
-
-
-// GENERAL
 void craneSetupF() {
     craneSetupZAxisF();
     craneSetupRAxisF();
     craneSetupYAxisF();
-}
-
-void craneSetupB() {
-    craneSetupZAxisB();
-    craneSetupRAxisB();
-    craneSetupYAxisB();
 }

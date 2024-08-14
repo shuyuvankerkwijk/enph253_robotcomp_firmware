@@ -38,13 +38,13 @@ extern int RMOTOR_FRONT_FORWARD_PIN;
 extern int RMOTOR_FRONT_BACKWARD_PIN;
 extern int RMOTOR_FRONT_ENCODER_PIN;
 extern int RMOTOR_FRONT_ENCODER_PIN_B;
-extern int RMOTOR_FRONT_RETRACT_LIMIT_SWITCH_PIN;
+extern int RMOTOR_FRONT_EXTEND_LIMIT_SWITCH_PIN;
 
 extern int RMOTOR_BACK_FORWARD_PIN;
 extern int RMOTOR_BACK_BACKWARD_PIN;
 extern int RMOTOR_BACK_ENCODER_PIN;
 extern int RMOTOR_BACK_ENCODER_PIN_B;
-extern int RMOTOR_BACK_RETRACT_LIMIT_SWITCH_PIN;
+extern int RMOTOR_BACK_EXTEND_LIMIT_SWITCH_PIN;
 
 // "Y-axis" translation for both arms (called 'YMOTOR' just to differentatiate from the z-axis rotation)
 extern int YMOTOR_FRONT_UP_PIN;

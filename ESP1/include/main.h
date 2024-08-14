@@ -1,5 +1,5 @@
-extern bool run;
+// extern bool run;
 
-extern int moveR;
-extern int moveY;
-extern int moveZ;
+// extern int moveR;
+// extern int moveY;
+// extern int moveZ;
